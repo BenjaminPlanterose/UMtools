@@ -1,0 +1,13 @@
+Package: UMtools
+Title: An R-package for analysing Illumina DNA Methylation arrays at the fluorescence intensity level
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Benjamin",
+           family = "Planterose",
+           role = c("aut", "cre"),
+           email = "b.planterosejimenez@erasmusmc.nl",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Adds extra funtionality for analysing Illumina DNA Methylation arrays at the fluorescence intensity level
+License: MIT
+Encoding: UTF-8
+LazyData: true
