@@ -11,3 +11,4 @@ Description: Adds extra funtionality for analysing Illumina DNA Methylation arra
 License: MIT
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.0
