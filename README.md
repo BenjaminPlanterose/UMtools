@@ -269,7 +269,7 @@ Internally, it performs the following:
 
 <img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
 
-<img src="https://render.githubusercontent.com/render/math?math=\beta_{II} &= \frac{G}{G + R + \alpha}">
+<img src="https://render.githubusercontent.com/render/math?math=\beta_{II} = \frac{G}{G + R + \alpha}">
 
 
 
