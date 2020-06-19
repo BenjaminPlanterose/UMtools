@@ -43,14 +43,21 @@ install_github("BenjaminPlanterose/UMtools")
 # UMtools tutorial
     
 Do not attempt to perform this tutorial without at least 8GB of RAM. Working with fluorescence intensities
-involves the use of several large matrices. To avoid any issues, we recommend to always monitor the consumption of RAM via htop:
+involves the use of several large matrices. To avoid any issues, we recommend to always monitor resource via htop:
 
 ```bash
+sudo apt-get install htop
 htop
 ```
 
+Also, when deleting large object in R, call the garbage collector:
 
-## 0) A word on the Beadchip microarray technology and the probes included in the 450K: 
+```r
+gc()
+```
+
+
+## A word on the Beadchip microarray technology and the probes included in the 450K: 
 
 The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 Hundreds of thousands of copies of a specific oligonucleotide lie on the surface of silica beads.
@@ -102,7 +109,7 @@ Finally, there 473 orphan probes, placed on the array for unknown purposes. In t
 
 
 
-## 1) Peaking into an IDAT file
+## Peaking into an IDAT file
 
 The .IDAT extension (Intensity Data) corresponds to Illumina's proprietary format for storage of microarray scanners'
 raw fluorescence output among several genome-wide platform. The IDAT format is encrypted and non-human readable. Before the R-package illuminaio was developed, no alternatives to vendor's software existed in order to read IDAT files.
@@ -115,7 +122,22 @@ tar -xvf GSE104812_RAW.tar
 find . -type f ! -name '*.idat.gz' -delete
 gunzip *.gz
 ```
-Or if prefered, go to https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812 and download TAR (of IDAT) via http.
+Or if prefered, it is also possible to go to download TAR (of IDAT) via http https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
+
+
+Back to R, we will also extract the phenotypic information from GEO. GEOquery allows to parse with minimum number of lines of code:
+
+```r
+setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
+pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
+pheno <- pheno_object[[1]]
+pheno <- phenoData(pheno)
+pheno <- pData(pheno)
+pheno = data.frame(GEO_ID = as.character(rownames(pheno)), 
+                   sex = as.factor(pheno$`gender:ch1`), 
+                   age = as.numeric(pheno$`age (y):ch1`))
+```
+
 
 Back to R, we firstly load illuminaio (a dependancy of minfi that is automatically downloaded with it):
 
@@ -161,7 +183,7 @@ head(example$Quants)
 The information about the standard deviation of fluorescence intensities is highly valuable and has rarely made it to the literature.
 
 
-## 2) Extracting raw intensities
+## Extracting raw intensities
 
 The minfi R-package is a massive library that has set the standards of quality in epigenomics. 
 However, its extensive use of S4-object oriented language can make it hard for users to find and repurpose functions.
@@ -258,14 +280,14 @@ RedSD = assay(rgSet, "RedSD")     # Red SD across beads
 nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 ```
 
-To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which internally employs unexported minfi:::.preprocessRaw function), return a list containing fluorescence intensities assigned to unmethylated and methylated epiallele.
+To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which internally employs unexported minfi:::.preprocessRaw function), returning a list that contains methylated and unmethylated fluorescence intensities.
 
 ```r
 M_U = GR_to_UM(Red, Grn, rgSet)
 M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
 ```
 
-Internally, it performs the following:
+Internally, it assignes the methylated and unmethylated intensity values as the following:
 
 | Probe Type    |  Methylated       |     Unmethylated  |
 |:-------------:|:-----------------:|:-----------------:|
@@ -274,23 +296,28 @@ Internally, it performs the following:
 | Type-I Red    | Red (addressB)    |  Red (addressA)   |
 
 
-To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, the minimum number of beads between address-A and -B is selected to represent a CpG targetted by each pair of type-I probes.
+To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, we select the smallest number of beadsbetween addressA and addressB to represent a CpG targetted by type-I probe pairs.
 
 ```r
 nBeads_cg = beads_GR_to_UM(nBeads, rgSet)
 ```
 
-Finally, to compute a matrix of raw beta-values, one can simply execute:
+Finally, to compute a matrix of raw beta-values, one can simply compute:
 
 ```r
 beta_value = M_U$M/(M_U$M + M_U$U + 100)
 ```
 
-However, raw beta-values should be avoided as these are affected by within and between array batch effects. Normalisation techniques are thus required, for which a wide variety of R-packages already exist. Here we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. UMtools focuses on the analysis of methylation data employ U/M intensity signals rather than the beta-value.
+However, raw beta-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. UMtools however does not focus on analysis of the methylation values, bur rather on the U/M intensity signals directly.
 
+To clean up the workspace, we can perform:
+```r
+rm(Grn , Red , GrnSD , RedSD, nBeads, nBeads_cg, beta_value); gc()
+```
 
-## 3) Quickly importing/exporting with data.table
+## Quickly importing/exporting with data.table
 
+During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is prefarable to export and import the big matrices such as Red, Green, nBeads, U, M, SD_Grn, SD_Red, SD_U, SD_M or cg_nBeads. As R-base cannot cope with large files, we made use of data.table ultra-fast and RAM-efficient routines to build up wrappers to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
 
 ```r
 setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/")
@@ -299,31 +326,23 @@ M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 ```
 
 
-## 4) UM tools
+## UMtools in action
 
-To start employing some of the functions in UM tools, we will need to extract the phenotypic information from GEO. GEOquery allows to parse from GEO in a minimum number of lines.
+We firstly make sure that phenotypes are in the same order as the IDAT files:
 
 ```r
-setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
-pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
-pheno <- pheno_object[[1]]
-pheno <- phenoData(pheno)
-pheno <- pData(pheno)
-pheno = data.frame(GEO_ID = as.character(rownames(pheno)), 
-                   sex = as.factor(pheno$`gender:ch1`), 
-                   age = as.numeric(pheno$`age (y):ch1`))
 IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
 pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are in the same order as in IDATs
 ```
 
-### 4.1) U/M-plots
+### U/M-plots
 
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
 ```
 
-### 4.2) CV jitter plots
+### CV jitter plots
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
@@ -338,7 +357,7 @@ density_jitter_plot(CV, "cg05544622", pheno$sex)
 density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 ```
 
-### 4.3) Bivariate Gaussian Mixture Models (bGMMs)
+### Bivariate Gaussian Mixture Models (bGMMs)
 
 ```r
 set.seed(1); bGMM(M_U$M, M_U$U, "cg13293246", 1) # K = 1
@@ -348,7 +367,7 @@ set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", 4) # K = 4
 set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", 5) # K = 5
 ```
 
-### 4.4) CV and BC(CV)
+### CV and BC(CV)
 Compute CV per CpG and per sample
 
 
@@ -357,7 +376,7 @@ BC_CV = compute_BC_CV(CV)
 density_jitter_plot(CV, which.max(BC_CV), pheno$sex)
 ```
 
-### 4.5.1) K-calling with visual output
+### K-calling with visual output
 
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 1
@@ -366,7 +385,7 @@ Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 4
 ```
 
-### 4.5.2) K-calling epigenome-wide
+### Epigenome-wide K-calling
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
