@@ -58,9 +58,12 @@ the order and the number copies for a given bead type are random, hence requirin
 Although targeting 485,512 cytosines, the 450K technology employs 622,399 probe oligonucleotides. There are
 several reasons for this. To begin with, 450K combines three types of probes concerning detection:
 
-* Type I (n = 135,476) two bead types per cytosine 
-  * Type-I Green (n = 46,289 x 2): Quantification is informative only in the Green channel
-  * Type-I Red (n = 89,187 x 2): Quantification is informative only in the Red channel
+* Type I (n = 135,476 x 2) - two bead types per cytosine 
+
+  * Type-I Green (n = 46,289 x 2) - Quantification is informative only in the Green channel
+  
+  * Type-I Red (n = 89,187 x 2) - Quantification is informative only in the Red channel
+  
 * Type-II (n = 350,036): one bead type per cytosine, quantification is informative in both channels
 
 In addition, there are a set of quality control probes (n = 848):
@@ -76,7 +79,7 @@ Finally, there 473 orphan probes with placed on the array for unknown purposes
 
 
 
-# 1) Introduction to the IDAT format
+## 1) Introduction to the IDAT format
 
 The .IDAT extension (Intensity Data) is Illumina's proprietary format for storage of the fluorescence scanners'
 raw output across several genome-wide platform. The IDAT format is an encrypted and non-human readable.
@@ -137,7 +140,7 @@ head(example$Quants)
 # 10600328 3538  439     11
 ```
 
-# 2) Extracting raw intensities with the minfi package
+## 2) Extracting raw intensities with the minfi package
 
 The minfi library is a massive library. It contains utils to extract raw information. However, the use of
 S4 object oriented language can make it hard for users to identify the right functions. In this tutorial
@@ -208,7 +211,7 @@ beta_value = M_U$M/(M_U$M + M_U$U + 100)
 However, raw beta-values should be avoided as these are affected by within and between array batch effects. Normalisation techniques are thus required, for which a wide variety of R-packages already exist. Here we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. UMtools focuses on the analysis of methylation data employ U/M intensity signals rather than the beta-value.
 
 
-# 3) Quickly importing/exporting with data.table
+## 3) Quickly importing/exporting with data.table
 
 
 ```r
@@ -218,7 +221,7 @@ M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 ```
 
 
-# 4) UM tools
+## 4) UM tools
 
 To start employing some of the functions in UM tools, we will need to extract the phenotypic information from GEO. GEOquery allows to parse from GEO in a minimum number of lines.
 
@@ -235,14 +238,14 @@ IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
 pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are in the same order as in IDATs
 ```
 
-## 4.1) U/M-plots
+### 4.1) U/M-plots
 
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
 ```
 
-## 4.2) CV jitter plots
+### 4.2) CV jitter plots
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
@@ -257,7 +260,7 @@ density_jitter_plot(CV, "cg05544622", pheno$sex)
 density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 ```
 
-# 3) Bivariate Gaussian Mixture Models (bGMMs)
+### 4.3) Bivariate Gaussian Mixture Models (bGMMs)
 
 ```r
 set.seed(1); bGMM(M_U$M, M_U$U, "cg13293246", 1) # K = 1
@@ -267,7 +270,7 @@ set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", 4) # K = 4
 set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", 5) # K = 5
 ```
 
-# 4) CV and BC(CV)
+### 4.4) CV and BC(CV)
 Compute CV per CpG and per sample
 
 
@@ -276,7 +279,7 @@ BC_CV = compute_BC_CV(CV)
 density_jitter_plot(CV, which.max(BC_CV), pheno$sex)
 ```
 
-# 5.1) K-calling with visual output
+### 4.5.1) K-calling with visual output
 
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 1
@@ -285,14 +288,14 @@ Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 4
 ```
 
-# 5.2) K-calling epigenome-wide
+### 4.5.2) K-calling epigenome-wide
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
 K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99, 1.01, 0.01), R = 2)
 ```
 
-# 6) Comethylation plots
+### 4.6) Comethylation plots
 
 
 
