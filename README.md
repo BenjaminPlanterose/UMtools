@@ -15,7 +15,7 @@
     
 ## Dependencies 
 
-```R
+```r
 library(minfi)
 library(modes)
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
