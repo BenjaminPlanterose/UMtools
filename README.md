@@ -11,7 +11,7 @@
 [MIT](https://choosealicense.com/licenses/mit/)
 
 
-## Tested on:
+## Tested on
 
     Ubuntu 18.04.4 LTS (bionic), R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
     Contact b.planterosejimenez@erasmusmc.nl for any issues arising while running UMtools.
@@ -47,7 +47,7 @@ devtools::install_github("BenjaminPlanterose/UMtools")
 Do not attempt to perform this tutorial without at least 8GB of RAM. Working with fluorescence intensities
 involves several large matrices
 
-# 0) A word on the Beadchip microarray technology and the IDAT format: 
+## 0) A word on the Beadchip microarray technology and the IDAT format: 
 
 The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 Hundreds of thousands of copies of a specific oligonucleotide lie on the surface of silica beads.
@@ -58,9 +58,10 @@ the order and the number copies for a given bead type are random, hence requirin
 Although targeting 485,512 cytosines, the 450K technology employs 622,399 probe oligonucleotides. There are
 several reasons for this. To begin with, 450K combines three types of probes concerning detection:
 
-Type-I Green (n = 46,289 x 2): two bead types per cytosine, quantification is informative only in the Green channel
-Type-I Red (n = 89,187 x 2): two bead types per cytosine, quantification is informative only in the Red channel
-Type-II (n = 350,036): one bead type per cytosine, quantification is informative in both channels
+* Type I (n = 135,476) two bead types per cytosine 
+  * Type-I Green (n = 46,289 x 2): Quantification is informative only in the Green channel
+  * Type-I Red (n = 89,187 x 2): Quantification is informative only in the Red channel
+* Type-II (n = 350,036): one bead type per cytosine, quantification is informative in both channels
 
 In addition, there are a set of quality control probes (n = 848):
 Staining (n = 4), extension (n = 4), hybridization (n = 3), target removal (n = 2), bisulfite conversion I (n = 12),
