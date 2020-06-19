@@ -28,6 +28,13 @@ library(Sushi)
 library(preprocessCore)
 ```
 
+```r
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install('minfi')
+```
+
+
 ## About this tutorial
     
 Do not attempt to perform this tutorial without at least 8GB of RAM. Working with fluorescence intensities
