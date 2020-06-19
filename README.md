@@ -61,11 +61,11 @@ gc()
 
 The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 Hundreds of thousands of copies of a specific oligonucleotide lie on the surface of silica beads.
-During the manufacture of the chip, a total of 622,399 types of beads are pooled together and depeosited on
+During the manufacture of the chip, a total of 622,399 types of beads are pooled together and deposited on
 the microarray. Subsequently, beads automatically self-assemble on the microarray's microwell. As a result, both
 the order and the number copies for a given bead type are random, hence requiring the decoding of the microarray.
 
-Although employing 622,399 probe oligonucleotides, the 450K technology targes 485,512 cytosines. We register here the count of probes. To begin with, 450K combines three types of probes concerning detection:
+Although employing 622,399 probe oligonucleotides, the 450K technology targets 485,512 cytosines. We register here the count of probes. To begin with, 450K combines three types of probes concerning detection:
 
 * Type I (n = 135,476 x 2) - two bead types per cytosine 
 
@@ -97,7 +97,7 @@ In addition, there are a wide range of quality control probes (n = 848):
 
 * normalization (n = 186).
 
-As well, there are probes for targetting SNPs rather than CpGs for assessing sample mix-up (n = 65):
+As well, there are probes targetting SNPs rather than CpGs, included for assessing sample mix-up (n = 65):
 
 * SnpI (n = 25 x 2)
 
@@ -139,13 +139,13 @@ pheno = data.frame(GEO_ID = as.character(rownames(pheno)),
 ```
 
 
-Back to R, we firstly load illuminaio (a dependancy of minfi that is automatically downloaded with it):
+We then load illuminaio:
 
 ```r
 library(illuminaio)
 ```
 
-To peak into an IDAT file, in this case of the green channel of random sample, we can ran:
+To peak into an IDAT file, in this case of the green channel of random sample, we ran:
 
 ```r
 setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/")
@@ -223,18 +223,28 @@ SnpI <- getProbeInfo(rgSet, type = "SnpI")
 SnpII <- getProbeInfo(rgSet, type = "SnpII")
 ```
 
-For example:
+As a side note, a set of 473 probes (orphan probes) have been placed on the 450K microarray for unknown purposes
 
 ```r
-# Type I probes have two addresses corresponding to methylated and unmethylated probes
+known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, TypeI.Red$AddressA, 
+                 TypeI.Red$AddressB, TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA)
+                 
+length(known_probes)                  # 621926
+all = rownames(rgSet); length(known_probes) # 622399
+orphan = all[!(all %in% known_probes)]; length(orphan) # 473
+```
+
+Diving into the annotation, Type I probes have two addresses corresponding to methylated and unmethylated probes:
+```r
 head(TypeI.Green[, 1:3], n = 2)
 #          Name    AddressA    AddressB
 #   <character> <character> <character>
 # 1  cg02004872    25785404    58629399
 # 2  cg02050847    43656343    73683470
+```
 
-# Type II probes have only one address. Methylated and unmethylated corresponds 
-# to the same probe in two different fluorescent channels
+Type II probes have only one address and cover methylated and unmethylated intensities by employing the same probe in both channels
+```r
 head(TypeII[, 1:3], n = 2)
 #          Name    AddressA
 #   <character> <character>
@@ -258,18 +268,6 @@ colnames(annotation)
 # [33] "DHS"
 ```
 
-
-As a side note, a set of 473 probes (orphan probes) have been placed on the 450K microarray for unknown purposes
-
-```r
-known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, TypeI.Red$AddressA, 
-                 TypeI.Red$AddressB, TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA)
-                 
-length(known_probes)                  # 621926
-all = rownames(rgSet); length(known_probes) # 622399
-orphan = all[!(all %in% known_probes)]; length(orphan) # 473
-```
-
 In any case, to extract Green/Red fluorescence mean/standard deviation or number of beads from an RGChannelSetExtended object, we employ the function assay:
 
 ```r
@@ -280,14 +278,14 @@ RedSD = assay(rgSet, "RedSD")     # Red SD across beads
 nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 ```
 
-To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which internally employs unexported minfi:::.preprocessRaw function), returning a list that contains methylated and unmethylated fluorescence intensities.
+To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which internally employs the unexported function minfi:::.preprocessRaw function), returning a list that contains methylated and unmethylated fluorescence intensities.
 
 ```r
 M_U = GR_to_UM(Red, Grn, rgSet)
 M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
 ```
 
-Internally, it assignes the methylated and unmethylated intensity values as the following:
+Internally, it assigns the methylated and unmethylated intensity values as following:
 
 | Probe Type    |  Methylated       |     Unmethylated  |
 |:-------------:|:-----------------:|:-----------------:|
@@ -296,19 +294,19 @@ Internally, it assignes the methylated and unmethylated intensity values as the 
 | Type-I Red    | Red (addressB)    |  Red (addressA)   |
 
 
-To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, we select the smallest number of beadsbetween addressA and addressB to represent a CpG targetted by type-I probe pairs.
+To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, we select the smallest number of beads between addressA and addressB to represent a CpG targetted by type-I probe pairs.
 
 ```r
 nBeads_cg = beads_GR_to_UM(nBeads, rgSet)
 ```
 
-Finally, to compute a matrix of raw beta-values, one can simply compute:
+Finally, to obtain a matrix of raw beta-values, one can simply compute:
 
 ```r
 beta_value = M_U$M/(M_U$M + M_U$U + 100)
 ```
 
-However, raw beta-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. UMtools however does not focus on analysis of the methylation values, bur rather on the U/M intensity signals directly.
+However, raw beta-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
 
 To clean up the workspace, we can perform:
 ```r
@@ -324,7 +322,6 @@ setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/")
 export_bigmat(M_U$M, "M.txt", nThread = 4)
 M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 ```
-
 
 ## UMtools in action
 
