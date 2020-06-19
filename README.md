@@ -267,13 +267,11 @@ M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
 
 Internally, it performs the following:
 
-<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
-
-<img src="https://render.githubusercontent.com/render/math?math=\beta_{II} = \frac{G}{G %2B R %2B \alpha}">
-
-
-
-
+| Probe Type    |  Methylated       |     Unmethylated  |
+|:-------------:|:-----------------:|:-----------------:|
+| Type-II       | Green (addressA)  |  Red (addressA)   |
+| Type-I Green  | Green (addressB)  | Green (addressA)  |
+| Type-I Red    | Red (addressB)    |  Red (addressA)   |
 
 
 To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, the minimum number of beads between address-A and -B is selected to represent a CpG targetted by each pair of type-I probes.
