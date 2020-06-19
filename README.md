@@ -267,9 +267,7 @@ M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
 
 Internally, it performs the following:
 
-```markdown
 <img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
-```
 
 
 To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, the minimum number of beads between address-A and -B is selected to represent a CpG targetted by each pair of type-I probes.
