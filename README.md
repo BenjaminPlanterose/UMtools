@@ -7,28 +7,40 @@
 
 ### Department of Genetic Identification, Erasmus MC University Medical Centre Rotterdam, The Netherlands
 
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
 
 ## Tested on:
 
     Ubuntu 18.04.4 LTS (bionic), R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
     Contact b.planterosejimenez@erasmusmc.nl for any issues arising while running UMtools.
     
-## Dependencies 
+## Installation of Dependencies 
 
 ```r
-library(minfi)
-library(modes)
-library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-library(IlluminaHumanMethylation450kmanifest)
-library(GEOquery)
-library(scales)
-library(EMCluster)
-library(dbscan)
-library(Sushi)
-library(preprocessCore)
+# From Bioconductor
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install('minfi')
+BiocManager::install('GEOquery')
+
+# From CRAN
+install.packages(modes)
+install.packages(scales)
+install.packages(EMCluster)
+install.packages(dbscan)
+
+# From Github
+library("devtools")
+install_github("dphansti/Sushi")
 ```
 
-
+## Installation of UMtools:
+```r
+library(devtools)
+devtools::install_github("BenjaminPlanterose/UMtools")
+```
 
 ## About this tutorial
     
@@ -79,6 +91,20 @@ gunzip *.gz
 ```
 
 Or manually download at https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
+
+Back to R, we firstly load libraries
+
+```r
+library(minfi)
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+library(IlluminaHumanMethylation450kmanifest)
+library(GEOquery)
+library(scales)
+library(modes)
+library(EMCluster)
+library(dbscan)
+library(Sushi)
+```
 
 To peak into an IDAT file, in this case of the green channel of random sample, we can ran:
 
@@ -141,8 +167,10 @@ SnpII <- getProbeInfo(rgSet, type = "SnpII")
 Intringuingly, a set of 473 probes (orphan probes) have been placed on the 450K microarray for unknown purposes
 
 ```r
-known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, TypeI.Red$AddressA, TypeI.Red$AddressB,
-                 TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA); length(known_probes) # 621926
+known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, TypeI.Red$AddressA, 
+                 TypeI.Red$AddressB, TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA)
+                 
+length(known_probes)                  # 621926
 all = rownames(rgSet); length(probes) # 622399
 orphan = all[!(all %in% known_probes)]; length(missing) # 473
 ```
@@ -170,14 +198,100 @@ To convert nBeads from probes to CpGs, a criteria for type-I probes is required.
 nBeads_cg = beads_GR_to_UM(nBeads, rgSet)
 ```
 
+Finally, to compute a matrix of raw beta-values, one can simply execute:
+
+```r
+beta_value = M_U$M/(M_U$M + M_U$U + 100)
+```
+
+However, raw beta-values should be avoided as these are affected by within and between array batch effects. Normalisation techniques are thus required, for which a wide variety of R-packages already exist. Here we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. UMtools focuses on the analysis of methylation data employ U/M intensity signals rather than the beta-value.
 
 
-# 3) UM tools
-From this point on, we start relying on functions from UMtools. 
+# 3) Quickly importing/exporting with data.table
 
 
+```r
+setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/")
+export_bigmat(M_U$M, "M.txt", nThread = 4)
+M = import_bigmat("2020-06-19_M.txt", nThread = 4)
+```
 
 
+# 4) UM tools
+
+To start employing some of the functions in UM tools, we will need to extract the phenotypic information from GEO. GEOquery allows to parse from GEO in a minimum number of lines.
+
+```r
+setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
+pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
+pheno <- pheno_object[[1]]
+pheno <- phenoData(pheno)
+pheno <- pData(pheno)
+pheno = data.frame(GEO_ID = as.character(rownames(pheno)), 
+                   sex = as.factor(pheno$`gender:ch1`), 
+                   age = as.numeric(pheno$`age (y):ch1`))
+IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
+pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are in the same order as in IDATs
+```
+
+## 4.1) U/M-plots
+
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
+```
+
+## 4.2) CV jitter plots
+
+```r
+CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
+```
+
+
+```r
+density_jitter_plot(CV, "cg00050873", pheno$sex)
+density_jitter_plot(CV, "cg00214611", pheno$sex)
+density_jitter_plot(CV, "cg02839557", pheno$sex)
+density_jitter_plot(CV, "cg05544622", pheno$sex)
+density_jitter_plot(beta_value, "cg00050873", pheno$sex)
+```
+
+# 3) Bivariate Gaussian Mixture Models (bGMMs)
+
+```r
+set.seed(1); bGMM(M_U$M, M_U$U, "cg13293246", 1) # K = 1
+set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", 2) # K = 2
+set.seed(3); bGMM(M_U$M, M_U$U, "cg00814218", 3) # K = 3
+set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", 4) # K = 4
+set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", 5) # K = 5
+```
+
+# 4) CV and BC(CV)
+Compute CV per CpG and per sample
+
+
+```r
+BC_CV = compute_BC_CV(CV)
+density_jitter_plot(CV, which.max(BC_CV), pheno$sex)
+```
+
+# 5.1) K-calling with visual output
+
+```r
+Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 1
+Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 2
+Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 3
+Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 4
+```
+
+# 5.2) K-calling epigenome-wide
+
+```r
+chrY = rownames(annotation)[annotation$chr == "chrY"]
+K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99, 1.01, 0.01), R = 2)
+```
+
+# 6) Comethylation plots
 
 
 
