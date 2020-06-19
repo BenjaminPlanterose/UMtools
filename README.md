@@ -57,7 +57,7 @@ gc()
 ```
 
 
-## A word on the Beadchip microarray technology and the probes included in the 450K: 
+## A word on the Beadchip microarray technology and 450K probes: 
 
 The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 Hundreds of thousands of copies of a specific oligonucleotide lie on the surface of silica beads.
