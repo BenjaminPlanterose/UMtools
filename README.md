@@ -10,8 +10,12 @@
 [MIT](https://choosealicense.com/licenses/mit/)
 
 
-## What is UMtools?
+## Why UMtools? What is the purpose of this tutorial?
 
+There are a large variety of R-packages available to analyze data from Illumina DNA methylation microarrays. In order to ease general accesibility, these tend to isolate the user from the raw data and the complex underlying analysis.
+As a result, many users deploy standard pipelines without examining the raw data or critically assessing each step. Unlike available alternatives, UMtools aims to focus on low-level analysis of Illumina DNA methylation microarrays data.
+
+With this tutorial we aim to increase the technical accesibility of Illumina's DNA methylation microarrays. We believe that there is more potential stuck at the IDAT file that what is currently being exploited. Particularly, the standard deviation of fluorescence across beads offers huge information for those researchers aiming to understanding the measurement error of the platform.
 
 ## Tested on
 
@@ -39,23 +43,22 @@ install_github("dphansti/Sushi")
 install_github("BenjaminPlanterose/UMtools")
 ```
 
-
-# UMtools tutorial
+# About the tutorial
     
-Do not attempt to perform this tutorial without at least 8GB of RAM. Working with fluorescence intensities
-involves the use of several large matrices. To avoid any issues, we recommend to always monitor resource via htop:
+Do not attempt to perform the UMtools tutorial without at least 8GB of RAM. Working with fluorescence intensities
+involves the use of large matrices. To avoid issues, we recommend to always monitor resources via htop:
 
 ```bash
 sudo apt-get install htop
 htop
 ```
 
-Also, when deleting large object in R, call the garbage collector:
+Also, when deleting large objects in R, you may call the garbage collector:
 
 ```r
+help(gc)
 gc()
 ```
-
 
 ## A word on the Beadchip microarray technology and 450K probes: 
 
@@ -97,7 +100,7 @@ In addition, there are a wide range of quality control probes (n = 848):
 
 * normalization (n = 186).
 
-As well, there are probes targetting SNPs rather than CpGs, included for assessing sample mix-up (n = 65):
+As well, some probes target SNPs, included for assessing sample mix-up (n = 65):
 
 * SnpI (n = 25 x 2)
 
@@ -114,7 +117,7 @@ Finally, there 473 orphan probes, placed on the array for unknown purposes. In t
 The .IDAT extension (Intensity Data) corresponds to Illumina's proprietary format for storage of microarray scanners'
 raw fluorescence output among several genome-wide platform. The IDAT format is encrypted and non-human readable. Before the R-package illuminaio was developed, no alternatives to vendor's software existed in order to read IDAT files.
 
-We first need to download some example files from the GEO database. Throughout this tutorial, we will be using the data from Shi *et al* (GEO_ID = GSE104812), consisting of whole blood DNA methylation data from healthy children. To download the data, you may ran the following bash commands:
+To unveil the content of the IDAT file, we first need to download some examples from the GEO database. Throughout this tutorial, we will be using the data from Shi *et al* (GEO_ID = GSE104812), consisting of whole blood DNA methylation data from healthy children. To download the data, you may ran the following bash commands:
 
 ```bash
 wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar --wait=10 --limit-rate=50K
@@ -122,10 +125,10 @@ tar -xvf GSE104812_RAW.tar
 find . -type f ! -name '*.idat.gz' -delete
 gunzip *.gz
 ```
-Or if prefered, it is also possible to go to download TAR (of IDAT) via http https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
+Or if prefered, it is also possible to go to the following url and manually download the TAR (of IDAT) via http https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
 
 
-Back to R, we will also extract the phenotypic information from GEO. GEOquery allows to parse with minimum number of lines of code:
+Back to R, we will also extract the phenotypic information from GEO. GEOquery allows to parse in minimum number of lines of code:
 
 ```r
 setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
@@ -138,21 +141,15 @@ pheno = data.frame(GEO_ID = as.character(rownames(pheno)),
                    age = as.numeric(pheno$`age (y):ch1`))
 ```
 
-
-We then load illuminaio:
-
-```r
-library(illuminaio)
-```
-
 To peak into an IDAT file, in this case of the green channel of random sample, we ran:
 
 ```r
+library(illuminaio)
 setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/")
 example = illuminaio::readIDAT("GSM2808239_sample1_Grn.idat")
 ```
 
-An IDAT contains the following fields:
+The output of readIDAT contains the following fields:
 
 ```r
 names(example)
@@ -160,7 +157,7 @@ names(example)
 # [8] "RedGreen"  "Barcode"       "ChipType"  "RunInfo" "Unknowns"
 ```
 
-For example, information about the run is stored at:
+For example, deep information about the processing of the sample is stored at:
 
 ```r
 head(example$RunInfo)
@@ -180,7 +177,7 @@ head(example$Quants)
 # 10600328 3538  439     11
 ```
 
-The information about the standard deviation of fluorescence intensities is highly valuable and has rarely made it to the literature.
+We particularly highlight the standard deviation of fluorescence intensities, as it is highly valuable and has rarely made it to the literature.
 
 
 ## Extracting raw intensities
@@ -234,7 +231,7 @@ all = rownames(rgSet); length(known_probes) # 622399
 orphan = all[!(all %in% known_probes)]; length(orphan) # 473
 ```
 
-Diving into the annotation, Type I probes have two addresses corresponding to methylated and unmethylated probes:
+Diving into the annotation, Type I probes have two probes or addresses (A and B) corresponding to unmethylated and methylated probes, respectively:
 ```r
 head(TypeI.Green[, 1:3], n = 2)
 #          Name    AddressA    AddressB
@@ -243,7 +240,7 @@ head(TypeI.Green[, 1:3], n = 2)
 # 2  cg02050847    43656343    73683470
 ```
 
-Type II probes have only one address and cover methylated and unmethylated intensities by employing the same probe in both channels
+Type II probes have only one probe or address (A) which covers both methylated and unmethylated intensities:
 ```r
 head(TypeII[, 1:3], n = 2)
 #          Name    AddressA
@@ -252,7 +249,7 @@ head(TypeII[, 1:3], n = 2)
 # 2  cg00061679    28780415
 ```
 
-For are more thorough annotation of type-I and II probes, we can execute:
+For a more thorough annotation of type-I and II probes, we can execute:
 
 ```r
 annotation <- getAnnotation(rgSet)
@@ -303,19 +300,28 @@ nBeads_cg = beads_GR_to_UM(nBeads, rgSet)
 Finally, to obtain a matrix of raw beta-values, one can simply compute:
 
 ```r
-beta_value = M_U$M/(M_U$M + M_U$U + 100)
+offset = 100 # For numerical stability at low fluorescence intensities
+beta_value = M_U$M/(M_U$M + M_U$U + offset)
 ```
 
-However, raw beta-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
+M-values are also quite popular:
+```r
+offset = 1 # For numerical stability at low fluorescence intensities
+M_value = log2((M_U$M + offset)/(M_U$U + offset))
+```
+
+However, raw beta and M-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
+
+
 
 To clean up the workspace, we can perform:
 ```r
-rm(Grn , Red , GrnSD , RedSD, nBeads, nBeads_cg, beta_value); gc()
+rm(Grn , Red , GrnSD , RedSD, nBeads, nBeads_cg, beta_value, M_value); gc()
 ```
 
 ## Quickly importing/exporting with data.table
 
-During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is prefarable to export and import the big matrices such as Red, Green, nBeads, U, M, SD_Grn, SD_Red, SD_U, SD_M or cg_nBeads. As R-base cannot cope with large files, we made use of data.table ultra-fast and RAM-efficient routines to build up wrappers to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
+During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is prefarable to read once and export/import the rest of the times. As R-base cannot cope with large files, we made use of data.table ultra-fast and RAM-efficient routines to build up wrappers to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
 
 ```r
 setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/")
@@ -389,7 +395,7 @@ chrY = rownames(annotation)[annotation$chr == "chrY"]
 K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99, 1.01, 0.01), R = 2)
 ```
 
-### 4.6) Comethylation plots
+### Comethylation plots
 
 
 
