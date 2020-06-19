@@ -15,16 +15,18 @@
     
 ## Dependencies 
 
-    library(minfi)
-    library(modes)
-    library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-    library(IlluminaHumanMethylation450kmanifest)
-    library(GEOquery)
-    library(scales)
-    library(EMCluster)
-    library(dbscan)
-    library(Sushi)
-    library(preprocessCore)
+```R
+library(minfi)
+library(modes)
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+library(IlluminaHumanMethylation450kmanifest)
+library(GEOquery)
+library(scales)
+library(EMCluster)
+library(dbscan)
+library(Sushi)
+library(preprocessCore)
+```
 
 ## About this tutorial
     
@@ -41,6 +43,7 @@ the order and the number copies for a given bead type are random, hence requirin
 
 Although targeting 485,512 cytosines, the 450K technology employs 622,399 probe oligonucleotides. There are
 several reasons for this. To begin with, 450K combines three types of probes concerning detection:
+
 Type-I Green (n = 46,289 x 2): two bead types per cytosine, quantification is informative only in the Green channel
 Type-I Red (n = 89,187 x 2): two bead types per cytosine, quantification is informative only in the Red channel
 Type-II (n = 350,036): one bead type per cytosine, quantification is informative in both channels
@@ -97,11 +100,11 @@ But most importantly, number of beads, mean and standard deviation of the fluore
       # 10600328 3538  439     11
 
 
-# 2) Extracting raw intensities with minfi
+# 2) Extracting raw intensities with the minfi package
 
 The minfi library is a massive library. It contains utils to extract raw information. However, the use of
 S4 object oriented language can make it hard for users to identify the right functions. In this tutorial
-we have put them all together to ease the painstacking journey through minfi's documentation.
+we have put them all together to ease the painstacking journey through minfi's dense documentation.
 
 To read all IDAT files in a directory, we use the read.metharray.exp function. If additionally, we intend
 to read additional information such as the number of beads or the standard deviation of the fluorescence
@@ -111,7 +114,7 @@ intensity channels, we will need to set the extended argument to TRUE.
     rgSet = read.metharray.exp(getwd(), extended = TRUE)
     IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
 
-From the resulting RGChannelSetExtended class object, it is possible to extract information of all types of probes
+From the resulting RGChannelSetExtended class object, it is possible to extract information for all probe types
 
     annotation <- getAnnotation(rgSet)
     TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
@@ -121,13 +124,12 @@ From the resulting RGChannelSetExtended class object, it is possible to extract 
     SnpI <- getProbeInfo(rgSet, type = "SnpI")
     SnpII <- getProbeInfo(rgSet, type = "SnpII")
 
-Intringuingly, a set of 473 probes (orphan probes) have been placed on the microarray for unknown purposes
+Intringuingly, a set of 473 probes (orphan probes) have been placed on the 450K microarray for unknown purposes
 
     known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, TypeI.Red$AddressA, TypeI.Red$AddressB,
                      TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA); length(known_probes) # 621926
     all = rownames(rgSet); length(probes) # 622399
     orphan = all[!(all %in% known_probes)]; length(missing) # 473
-
 
 In any case, to extract Green/Red fluorescence mean/standard deviation or number of beads from an RGChannelSetExtended object, we employ the function assay:
 
@@ -137,13 +139,15 @@ In any case, to extract Green/Red fluorescence mean/standard deviation or number
     RedSD = assay(rgSet, "RedSD")     # Red SD across beads
     nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 
-To convert from probes to CpG sites, we included wrappers GR_to_UM and beads_GR_to_UM.
+To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which internally employs unexported minfi:::.preprocessRaw function), return a list containing fluorescence intensities assigned to unmethylated and methylated epiallele.
 
     M_U = GR_to_UM(Red, Grn, rgSet)
     M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
+    
+To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, the minimum number of beads between address-A and -B is selected to represent a CpG targetted by each pair of type-I probes.
+
     nBeads_cg = beads_GR_to_UM(nBeads, rgSet)
 
-GR_to_UM employs unexported minfi:::.preprocessRaw function.
 
 
 # 3) UM tools
