@@ -344,10 +344,12 @@ pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are 
 
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
 ```
 
-![Alt text](img/UM.tiff?raw=true "cg00026186 U/M plot")
+![Alt text](img/UM.png?raw=true "cg00026186 U/M plot")
+
+
+
 
 ### CV jitter plots
 
