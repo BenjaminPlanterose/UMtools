@@ -460,26 +460,27 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 ### Quantifying epigenome-wide ambivalency in probe failure
 
-For probes suffering from a genetic variant that causes probe failure, it a duality in probe efficiency (for some individuals it fails, for others it does not). We first define, CV, as the coefficient of variation of the log of the total intensity computed as:
-
-
-<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
+For probes suffering from a genetic variant that causes probe failure, it a duality in probe efficiency (for some individuals it fails, for others it does not). We first define, CV, as the coefficient of variation of the log of the total intensity defined as:
 
 <img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\sigma_{ln(U %2B M)}}{\mu_{ln(U %2B M)}}">
 
-
+CV is a measure of noise-to-signal ratio and can be simply computed by compute_cv:
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 ```
+
+CV is highly bimodal when a probe fails for some samples but not for others:
 
 ```r
 density_jitter_plot(CV, "cg00026186", pheno$sex)
 ```
 ![Alt text](img/jitter_CV.png?raw=true "cg00026186 jitter")
 
+Bimodality can be quantified by a *bimodality coefficient*, rendering a good measure for ambivalency in probe failure.
 
-Bimodality of CV is a good measure for ambivalency in probe failure.
+<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\gamma_{CV} %2B 1}{\kappa_{CV} + \times\dfrac{$(n-1)^2$}{(n-2)\times(n-3)}}">
+
 
 ```r
 BC_CV = compute_BC_CV(CV)
@@ -487,6 +488,7 @@ BC_CV["cg00050873"]
 # cg00050873 
 #   1.128741
 ```
+
 
 
 ### K-calling with visual output
