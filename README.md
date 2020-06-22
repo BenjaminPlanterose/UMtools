@@ -351,21 +351,22 @@ UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 
 
 
-### CV jitter plots
+### Jitter plots
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 ```
 
-
 ```r
 density_jitter_plot(CV, "cg00026186", pheno$sex)
+```
+![Alt text](img/jitter_CV.png?raw=true "cg00026186 U/M plot")
+
+```r
 density_jitter_plot(beta_value, "cg00026186", pheno$sex)
 ```
 
-![Alt text](img/jitter_CV.png?raw=true "cg00026186 U/M plot")
-
-![Alt text](img/jitter_betaval?raw=true "cg00026186 U/M plot")
+![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
 
 
 
