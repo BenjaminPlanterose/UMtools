@@ -346,12 +346,51 @@ pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are 
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 ```
 
-![Alt text](img/UM.png?raw=true "cg00026186 U/M plot")
+![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
+
+
+### Bivariate Gaussian Mixture Models (bGMMs)
+
+
+```r
+set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
+```
+
+![Alt text](img/bGMM2.png?raw=true "cg03398919 bGMM")
+
+
+```r
+set.seed(3); bGMM(M_U$M, M_U$U, "cg00814218", K = 3)
+```
+
+![Alt text](img/bGMM3.png?raw=true "cg00814218 bGMM")
+
+
+```r
+set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", K = 4)
+```
+
+![Alt text](img/bGMM4.png?raw=true "cg27024127 bGMM")
+
+
+```r
+set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
+```
+![Alt text](img/bGMM5.png?raw=true "cg23186955 bGMM")
 
 
 
 
 ### Jitter plots
+
+density_jitter_plot can accept any continous variable such as beta values:
+
+```r
+density_jitter_plot(beta_value, "cg00026186", pheno$sex)
+```
+![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
+
+
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
@@ -360,70 +399,43 @@ CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 ```r
 density_jitter_plot(CV, "cg00026186", pheno$sex)
 ```
-![Alt text](img/jitter_CV.png?raw=true "cg00026186 U/M plot")
-
-```r
-density_jitter_plot(beta_value, "cg00026186", pheno$sex)
-```
-
-![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
+![Alt text](img/jitter_CV.png?raw=true "cg00026186 jitter")
 
 
-
-
-### Bivariate Gaussian Mixture Models (bGMMs)
-
-```r
-set.seed(1); bGMM(M_U$M, M_U$U, "cg13293246", 1) # K = 1
-```
-
-![Alt text](img/bGMM1.png?raw=true "cg00026186 U/M plot")
-
-
-```r
-set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", 2) # K = 2
-```
-
-![Alt text](img/bGMM2.png?raw=true "cg00026186 U/M plot")
-
-
-```r
-set.seed(3); bGMM(M_U$M, M_U$U, "cg00814218", 3) # K = 3
-```
-
-![Alt text](img/bGMM3.png?raw=true "cg00026186 U/M plot")
-
-
-```r
-set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", 4) # K = 4
-```
-
-![Alt text](img/bGMM4.png?raw=true "cg00026186 U/M plot")
-
-
-```r
-set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", 5) # K = 5
-```
-![Alt text](img/bGMM5.png?raw=true "cg00026186 U/M plot")
-
-
-### CV and BC(CV)
-Compute CV per CpG and per sample
-
+Bimodality of CV is a good measure for ambivalency in probe failure.
 
 ```r
 BC_CV = compute_BC_CV(CV)
-density_jitter_plot(CV, which.max(BC_CV), pheno$sex)
+BC_CV["cg00050873"]
+# cg00050873 
+#   1.128741
 ```
+
+
+
 
 ### K-calling with visual output
 
 ```r
-Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 1
-Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 2
-Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 3
-Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 4
+Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
+# [1] 1
 ```
+
+```r
+Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 2
+# [1] 2
+```
+
+```r
+Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 3
+# [1] 3
+```
+
+```r
+Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 4
+# [1] 4
+```
+
 
 ### Epigenome-wide K-calling
 
