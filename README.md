@@ -340,12 +340,23 @@ pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are 
 ```
 
 
-### U/M-plots
+### From methylation to the UM plane
+
+In the methylation scale, probe failure is indistinguishable from intermediate methylation. The reason is that when a probe fails, background fluorescence is acquired in both channels of roughly the same scale.
+
+Here, we show an example of probes targetting the Y-chromosome. Although it fails in females, the methylation tends towards 50 %.
+
+```r
+density_jitter_plot(beta_value, "cg00026186", pheno$sex)
+```
+![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
+
+
+This is obvious in the UM-plane as failed sampled cluster at the origin.
 
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 ```
-
 ![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
 
 
@@ -385,10 +396,6 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 density_jitter_plot can accept any continous variable such as beta values:
 
-```r
-density_jitter_plot(beta_value, "cg00026186", pheno$sex)
-```
-![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
 
 
 

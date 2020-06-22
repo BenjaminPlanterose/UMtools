@@ -28,7 +28,7 @@ UM_plot <- function(M, U, CpG, sex = NULL, xlim = NULL, ylim = NULL, alpha = 0.5
   if(is.null(sex))
   {
     plot(df$x, df$y, col = alpha("black", alpha), pch = 19, main = CpG, xlab = 'M', ylab = 'U',
-         xlim = xlim, ylim = ylim, cex.main = 0.8)
+         xlim = xlim, ylim = ylim)
   }
   else
   {
@@ -36,7 +36,7 @@ UM_plot <- function(M, U, CpG, sex = NULL, xlim = NULL, ylim = NULL, alpha = 0.5
     levels(col) = c("deeppink2", "dodgerblue1")
     col = as.character(col)
     plot(df$x, df$y, col = alpha(col, alpha), pch = 19, main = CpG, xlab = 'M', ylab = 'U',
-         xlim = xlim, ylim = ylim, cex.main = 0.8)
+         xlim = xlim, ylim = ylim)
   }
 
 }
