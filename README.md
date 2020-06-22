@@ -465,7 +465,7 @@ For probes suffering from a genetic variant that causes probe failure, it a dual
 
 <img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
 
-<img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\sigma_{ln(U %2B M)}}{\mu{_ln(U %2B M)}}">
+<img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\sigma_{ln(U %2B M)}}{\mu_{ln(U %2B M)}}">
 
 
 
