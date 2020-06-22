@@ -2,7 +2,7 @@
 % Please edit documentation in R/GR_to_UM.R
 \name{GR_to_UM}
 \alias{GR_to_UM}
-\title{Transforms G/R fluorescence signals into U/M}
+\title{Transforms Green/Red fluorescence signals into Unmethylated/Methylated channels}
 \usage{
 GR_to_UM(Red, Grn, rgSet)
 }
@@ -17,7 +17,22 @@ GR_to_UM(Red, Grn, rgSet)
 A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
 }
 \description{
-Transforms G/R fluorescence signals into U/M
+Transforms
+}
+\details{
+Illumina DNA methylation microarrays detection rely on three types of probes:
+\itemize{
+\item type-I Red: 2 probes/addresses per CpG, informative on the Red channel exclusively.
+\item type-I Green: 2 probes/addresses per CpG, informative on the Green channel exclusively.
+\item type-II: 1 probe/address per CpG, informative in both Green and Red channels.
+}
+
+Methylated and unmethylated intensities are computed as followed:\tabular{lcr}{
+    \tab \strong{Methylated} \tab \strong{Unmethylated} \cr
+   \strong{Type-II} \tab Green (addressA) \tab Red (addressA) \cr
+   \strong{Type-I Red} \tab Red (addressB) \tab Red (addressA) \cr
+   \strong{Type-I Green} \tab Green (addressB) \tab Green (addressA) \cr
+}
 }
 \examples{
 GR_to_UM(Red, Grn, rgSet)

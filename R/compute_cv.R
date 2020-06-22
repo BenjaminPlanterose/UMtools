@@ -1,0 +1,16 @@
+#' Computes coefficient of variation of the log of the total intensity signal
+#' @description a
+#' @details a
+#' @param M_SD Methylated standard deviation intensity matrix (CpGs as rows, samples as columns)
+#' @param U_SD Unmethylated fluorescence standard deviation intensity matrix (CpGs as rows, samples as columns)
+#' @param M Methylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)
+#' @param U Unmethylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)
+#' @return A matrix \code{CV} (CpGs as rows, samples as columns)
+#' @examples
+#' GR_to_UM(Red, Grn, rgSet)
+compute_cv = function(M_SD, U_SD, M, U, alpha1 = 100, alpha2 = 1)
+{
+  SD_logT = (M_SD + U_SD + alpha1)/(M + U + alpha1)
+  mu_logT = log(M + U) - (SD_logT^2)/2 + alpha2
+  SD_logT/mu_logT
+}

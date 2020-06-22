@@ -1,5 +1,22 @@
-#' Transforms G/R fluorescence signals into U/M
+#' Transforms Green/Red fluorescence signals into Unmethylated/Methylated channels
+#' @description Transforms
+#' @details
+#'Illumina DNA methylation microarrays detection rely on three types of probes:
+#' \itemize{
+#'   \item type-I Red: 2 probes/addresses per CpG, informative on the Red channel exclusively.
+#'   \item type-I Green: 2 probes/addresses per CpG, informative on the Green channel exclusively.
+#'   \item type-II: 1 probe/address per CpG, informative in both Green and Red channels.
+#' }
 #'
+#' Methylated and unmethylated intensities are computed as followed:
+#'
+#' |                   | **Methylated**   | **Unmethylated** |
+#' |:----------------- |:----------------:| ----------------:|
+#' | **Type-II**       | Green (addressA) | Red (addressA)   |
+#' | **Type-I Red**    | Red (addressB)   | Red (addressA)   |
+#' | **Type-I Green**  | Green (addressB) | Green (addressA) |
+#'
+#' @md
 #' @param Red A red fluorescence intensity matrix (probes as rows, samples as columns)
 #' @param Grn A green fluorescence intensity matrix (probes as rows, samples as columns)
 #' @param rgSet An rgSet object imported by minfi (see minfi::read.metharray.exp for details)
