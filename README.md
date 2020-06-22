@@ -12,10 +12,9 @@
 
 ## Why UMtools? What is the purpose of this tutorial?
 
-There are a large variety of R-packages available to analyze data from Illumina DNA methylation microarrays. In order to ease general accesibility, these tend to isolate the user from the raw data and the complex underlying analysis.
-As a result, many users deploy standard pipelines without examining the raw data or critically assessing each step. Unlike available alternatives, UMtools aims to focus on low-level analysis of Illumina DNA methylation microarray data.
+There are a large variety of R-packages available to analyze data from Illumina DNA methylation microarrays. In order to ease general accesibility, these tend to isolate the user from the raw data and the complex underlying analysis. As a result, many users deploy standard pipelines without examining the raw data or critically assessing each step. Unlike available alternatives, UMtools aims to focus on low-level analysis of Illumina DNA methylation microarray data.
 
-With this tutorial we aim to increase the technical accesibility of Illumina's DNA methylation microarrays. We believe that there is more potential stuck at the IDAT file that what is currently being exploited. Particularly, the standard deviation of fluorescence across beads offers huge information for those researchers aiming to understanding the measurement error of the platform.
+With this tutorial we aim to increase the technical accesibility of Illumina's DNA methylation microarrays. We believe that there is more potential at the level of the IDAT file than what is currently being exploited. Particularly, the standard deviation of fluorescence across beads offers huge information for those researchers aiming to understanding the measurement error of the platform.
 
 ## Tested on
 
@@ -62,7 +61,7 @@ help(gc)
 gc()
 ```
 
-## A word on the Beadchip microarray technology and 450K probes: 
+## A word on the Beadchip microarray technology and the probes on the 450K
 
 The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 Hundreds of thousands of copies of a specific oligonucleotide lie on the surface of silica beads.
@@ -111,6 +110,9 @@ As well, some probes target SNPs, included for assessing sample mix-up (n = 65):
 Finally, there 473 orphan probes, placed on the array for unknown purposes. In total, that makes:
 
     473 + 25*2 + 40 + 848 + 46,289 * 2 + 89,187 * 2 + 350,036 = 622,399 probes
+
+
+## The 450K protocol
 
 
 
@@ -168,11 +170,11 @@ head(example$Quants)
 We particularly highlight the standard deviation of fluorescence intensities, as it is highly valuable and has rarely made it to the literature.
 
 
-## Extracting intensity matrices
+## Extracting fluorescence intensity matrices
 
-The minfi R-package is a massive library that has set the standards of quality in epigenomics. 
-However, its extensive use of S4-object oriented language can make it hard for users to find and repurpose functions.
-In this section, we have gathered together handy pieces of code for analysis of raw fluorescence intensities to ease the painstacking journey through minfi's dense documentation.
+The Bioconductor-based **minfi** library is a huge R-package that has set the standards of quality in methylomics data analysis. Though it contains a vast amount of code that could find other applications, its deep encapsullation via an S4 object-oriented implementation can make it hard for users to find and repurpose low-level functions, especially unexported functions, which are not even on the documentation. As a result, minfi is designed to run as a standarized pipeline rather than adaptable toolset.
+
+Given that UMtools depends on some basic processing operations already established in the minfi library, we have compiled in this tutorial some handy functions to ease the painstacking journey through minfi's dense documentation. 
 
 We firstly load all required libraries:
 
@@ -186,9 +188,10 @@ library(modes)
 library(EMCluster)
 library(dbscan)
 library(Sushi)
+library(UMtools)
 ```
 
-To read all IDAT files in a directory, we use the *read.metharray.exp* function. If additionally, we intend
+To read all IDAT files in a directory, we use the *minfi::read.metharray.exp* function. If additionally, we intend
 to read additional information such as the number of beads or the standard deviation of the fluorescence
 intensity channels, we will need to set the *extended* argument to TRUE.
 
@@ -318,7 +321,7 @@ M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 
 ## Quickly importing phenotypes with GEOquery
 
-GEOquery allows to parse phenotypes from the GEO database in minimum number of lines of code:
+In addition, GEOquery allows to parse phenotypes from the GEO database in minimum number of lines of code:
 
 ```r
 setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
@@ -335,42 +338,45 @@ pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are 
 
 ## UMtools in action
 
-UMtools was initially developed to characterise the effects of genetic artefacts on the fluorescence intensity signals of Illumina's DNA methylation microarrays. But we soon realized its potential for exploration of the behaviour of any probe.
+UMtools was initially developed to characterise the influence of genetic artefacts on the fluorescence intensity signals of Illumina's DNA methylation microarrays. But its use for exploring the behaviour of probes can be further extended to any probe.
 
-Moving from univariate methylation value to the bivariate the U/M plane offers not only a gain of resolution but also, the possibility to distinguish probe failure from intermediate methylation: when a probe fails, background fluorescence is acquired in both channels of roughly the same scale; as a result the ratio to the total intensity tends to 50 %. For example, this probe targets the Y-chromosome and hence fails in females given rise to beta-values tending towards 0.5:
+Moving from univariate methylation value to the bivariate the U/M plane not only offers a gain of resolution, but also the possibility to distinguish probe failure from intermediate methylation: when a probe fails, background fluorescence is acquired in both channels of roughly the same scale; as a result the ratio to the total intensity tends to 50 %. For example, the following probe targets the Y-chromosome and hence fails in females, giving rise to beta-values tending towards 0.5 (slightly skewed to the left by the established offset):
 ```r
-density_jitter_plot(beta_value, "cg00026186", pheno$sex)
+density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 ```
 ![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
 
-However, in the UM-plane failed samples cluster at the origin:
+Unlike on the methylation scale, failed samples cluster at the origin of the UM-plane:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 ```
 ![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
 
+UM plots wide variety of phenomena such as:
+
+
+
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
+
+The formation of clusters in the UM plane is a consistent but not exclusive feature of a genetic artefacts.
 
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
 ```
-
 ![Alt text](img/bGMM2.png?raw=true "cg03398919 bGMM")
 
 
 ```r
 set.seed(3); bGMM(M_U$M, M_U$U, "cg00814218", K = 3)
 ```
-
 ![Alt text](img/bGMM3.png?raw=true "cg00814218 bGMM")
 
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", K = 4)
 ```
-
 ![Alt text](img/bGMM4.png?raw=true "cg27024127 bGMM")
 
 
@@ -415,17 +421,17 @@ Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 ```
 
 ```r
-Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 2
+Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 2
 ```
 
 ```r
-Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 3
+Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 3
 ```
 
 ```r
-Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01)) # K = 4
+Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 4
 ```
 
