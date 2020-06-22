@@ -129,21 +129,7 @@ gunzip *.gz
 ```
 Or if prefered, it is also possible to go to the following url and manually download the TAR (of IDAT) via http https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
 
-
-Back to R, we will also extract the phenotypic information from GEO. GEOquery allows to parse in minimum number of lines of code:
-
-```r
-setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
-pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
-pheno <- pheno_object[[1]]
-pheno <- phenoData(pheno)
-pheno <- pData(pheno)
-pheno = data.frame(GEO_ID = as.character(rownames(pheno)), 
-                   sex = as.factor(pheno$`gender:ch1`), 
-                   age = as.numeric(pheno$`age (y):ch1`))
-```
-
-To peak into an IDAT file, in this case of the green channel of random sample, we ran:
+Back to R, to peak into an IDAT file, in this case of the green channel of random sample, we ran:
 
 ```r
 library(illuminaio)
@@ -320,7 +306,7 @@ To clean up the workspace, we can perform:
 rm(Grn , Red , GrnSD , RedSD, nBeads, nBeads_cg, beta_value, M_value); gc()
 ```
 
-## Quickly importing/exporting with data.table
+## Quickly importing/exporting large matrices with data.table
 
 During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is prefarable to read once and export/import the rest of the times. As R-base cannot cope with large files, we made use of data.table ultra-fast and RAM-efficient routines to build up wrappers to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
 
@@ -330,15 +316,24 @@ export_bigmat(M_U$M, "M.txt", nThread = 4)
 M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 ```
 
-## UMtools in action
+## Quickly importing phenotypes with GEOquery
 
-We firstly make sure that phenotypes are in the same order as the IDAT files:
+GEOquery allows to parse phenotypes from the GEO database in minimum number of lines of code:
 
 ```r
+setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
+pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
+pheno <- pheno_object[[1]]
+pheno <- phenoData(pheno)
+pheno <- pData(pheno)
+pheno = data.frame(GEO_ID = as.character(rownames(pheno)), 
+                   sex = as.factor(pheno$`gender:ch1`), 
+                   age = as.numeric(pheno$`age (y):ch1`))
 IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
 pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are in the same order as in IDATs
 ```
 
+## UMtools in action
 
 ### From methylation to the UM plane
 
@@ -352,12 +347,13 @@ density_jitter_plot(beta_value, "cg00026186", pheno$sex)
 ![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
 
 
-This is obvious in the UM-plane as failed sampled cluster at the origin.
+Unlike the methylation scale, this is obvious in the UM-plane where failed sampled cluster at the origin.
 
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 ```
 ![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
+
 
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
@@ -392,11 +388,9 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 
 
-### Jitter plots
+### Quantifying ambivalency in probe failure
 
 density_jitter_plot can accept any continous variable such as beta values:
-
-
 
 
 ```r
@@ -417,8 +411,6 @@ BC_CV["cg00050873"]
 # cg00050873 
 #   1.128741
 ```
-
-
 
 
 ### K-calling with visual output
