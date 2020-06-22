@@ -410,6 +410,14 @@ annotation["cg17004290", c("chr", "pos")] # chr4 108853384
 ![Alt text](img/SNP_M.png?raw=true "cg17004290 U/M plot")
 
 
+Sometimes, two SNPs interact giving rise to a mixture between probe failure and SNP confused for one of the epialleles:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg27024127", sex = NULL)
+annotation["cg27024127", c("chr", "pos")] # chr4 108853384
+```
+![Alt text](img/2SNP.png?raw=true "cg27024127 U/M plot")
+
+
 
 Finally, we show a probe affected by a SNP on top of being cross-reactive:
 ```r
@@ -422,8 +430,7 @@ annotation["cg23186955", c("chr", "pos")] # chr3  16420793
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of genetic artefacts.
-
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {1, 2, 3, 4, 5}.
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
