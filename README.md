@@ -479,7 +479,8 @@ density_jitter_plot(CV, "cg00026186", pheno$sex)
 
 Bimodality can be quantified by a *bimodality coefficient*, rendering a good measure for ambivalency in probe failure.
 
-<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\gamma_{CV} %2B 1}{\kappa_{CV} + \times\dfrac{$(n-1)^2$}{(n-2)\times(n-3)}}">
+<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\gamma_{CV} %2B 1}{\kappa_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
+
 
 
 ```r
