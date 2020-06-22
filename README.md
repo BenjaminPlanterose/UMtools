@@ -349,17 +349,80 @@ density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 Unlike on the methylation scale, failed samples cluster at the origin of the UM-plane:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
+annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 ![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
 
-UM plots wide variety of phenomena such as:
+UM plots wide variety of phenomena such as X-inactivation: due to the double gene dosage of Chromosome-X in females, one of the copies is randomly inactivated via large-scale targetted methylation. As a result, females are 50 % methylated while males are 0 or 100 % methylated:
 
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
+annotation["cg00026186", c("chr", "pos")] # chrX  48367230
+```
+![Alt text](img/x_inact.png?raw=true "cg00026186 U/M plot")
+
+
+However, some loci escape X-inactivation and as a result, are unmethylated in both males and females. However, given the double-copy of X-chromosomes in females, the unmethylated intensity is higher on average than in males
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg04927982", sex = pheno$sex)
+annotation["cg04927982", c("chr", "pos")] # chrX  53254653
+```
+![Alt text](img/escape.png?raw=true "cg04927982 U/M plot")
+
+
+Some probes are cross-reactive, e.g. they hybridize at several loci in the genome. Although supposedly targetting an autosomal locus, this probe looks exactly like X-inactivation due to its cross-reactivity towards the chromosome X:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg20926353", sex = pheno$sex)
+annotation["cg20926353", c("chr", "pos")] # chr9  84303358
+```
+![Alt text](img/CR.png?raw=true "cg20926353 U/M plot")
+
+
+In this case, the targetted locus escapes X-inactivation but on top, the probe is cross-reactive to the Y-chromosome (males get an extra M-signal from the Y-chromosome):
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg26738106", sex = pheno$sex)
+annotation["cg26738106", c("chr", "pos")] # chrX   3265038
+```
+![Alt text](img/CR_2.png?raw=true "cg26738106 U/M plot")
+
+
+Genetic artefacts such as SNPs or indels can cause probe failure when homozygous. In this case, a SNP causes a 3'-overhang, making it impossible to develop the single-base extension step:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg03398919", sex = NULL)
+annotation["cg03398919", c("chr", "pos")] # chr2 173118470
+```
+![Alt text](img/PF.png?raw=true "cg03398919 U/M plot")
+
+
+But other times, the SNP is confused for the U/M epiallele. When the biological context has the opposite state (SNP = U in a methylated region or viceversa), it gives rise to 3 clusters (homozygous and heterozygous for both allele). Here, SNP = U:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00814218", sex = NULL)
+annotation["cg00814218", c("chr", "pos")] # chr14  37445440
+```
+![Alt text](img/SNP_U.png?raw=true "cg00814218 U/M plot")
+
+
+And here, SNP = M:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg17004290", sex = NULL)
+annotation["cg17004290", c("chr", "pos")] # chr4 108853384
+```
+![Alt text](img/SNP_M.png?raw=true "cg17004290 U/M plot")
+
+
+
+Finally, we show a probe affected by a SNP on top of being cross-reactive:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg23186955", sex = pheno$sex)
+annotation["cg23186955", c("chr", "pos")] # chr3  16420793
+```
+![Alt text](img/CR_SNP.png?raw=true "cg23186955 U/M plot")
 
 
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
-The formation of clusters in the UM plane is a consistent but not exclusive feature of a genetic artefacts.
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of genetic artefacts.
 
 
 ```r
