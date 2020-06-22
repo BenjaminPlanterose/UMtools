@@ -466,7 +466,7 @@ For probes suffering from a genetic variant that causes probe failure, it a dual
 
 CV is a measure of noise-to-signal ratio and can be simply computed by *compute_cv*. CV is highly bimodal when a probe fails for some samples but not for others. Bimodality can be quantified by a *bimodality coefficient*:
 
-<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\^{\gamma}_{CV} %2B 1}{\^{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
+<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
 
 
 BC(CV) can be computed for all CpGs with *compute_BC_CV* and renders a good measure for ambivalency in probe failure.
