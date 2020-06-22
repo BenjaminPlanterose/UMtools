@@ -359,12 +359,16 @@ CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 
 
 ```r
-density_jitter_plot(CV, "cg00050873", pheno$sex)
-density_jitter_plot(CV, "cg00214611", pheno$sex)
-density_jitter_plot(CV, "cg02839557", pheno$sex)
-density_jitter_plot(CV, "cg05544622", pheno$sex)
-density_jitter_plot(beta_value, "cg00050873", pheno$sex)
+density_jitter_plot(CV, "cg00026186", pheno$sex)
+density_jitter_plot(beta_value, "cg00026186", pheno$sex)
 ```
+
+![Alt text](img/jitter_CV.png?raw=true "cg00026186 U/M plot")
+
+![Alt text](img/jitter_betaval?raw=true "cg00026186 U/M plot")
+
+
+
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
