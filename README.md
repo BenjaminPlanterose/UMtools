@@ -13,13 +13,15 @@
 ## Why UMtools? What is the purpose of this tutorial?
 
 There are a large variety of R-packages available to analyze data from Illumina DNA methylation microarrays. In order to ease general accesibility, these tend to isolate the user from the raw data and the complex underlying analysis.
-As a result, many users deploy standard pipelines without examining the raw data or critically assessing each step. Unlike available alternatives, UMtools aims to focus on low-level analysis of Illumina DNA methylation microarrays data.
+As a result, many users deploy standard pipelines without examining the raw data or critically assessing each step. Unlike available alternatives, UMtools aims to focus on low-level analysis of Illumina DNA methylation microarray data.
 
 With this tutorial we aim to increase the technical accesibility of Illumina's DNA methylation microarrays. We believe that there is more potential stuck at the IDAT file that what is currently being exploited. Particularly, the standard deviation of fluorescence across beads offers huge information for those researchers aiming to understanding the measurement error of the platform.
 
 ## Tested on
 
-    Ubuntu 18.04.4 LTS (bionic), R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
+    Ubuntu 18.04.4 LTS (bionic)
+    R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
+    
     Contact b.planterosejimenez@erasmusmc.nl for any issues arising while running UMtools.
     
 ## Installation 
@@ -46,7 +48,7 @@ install_github("BenjaminPlanterose/UMtools")
 # About the tutorial
     
 Do not attempt to perform the UMtools tutorial without at least 8GB of RAM. Working with fluorescence intensities
-involves the use of large matrices. To avoid issues, we recommend to always monitor resources via htop:
+involve large matrices. To avoid issues, we recommend to always monitor resources via htop:
 
 ```bash
 sudo apt-get install htop
@@ -180,11 +182,11 @@ head(example$Quants)
 We particularly highlight the standard deviation of fluorescence intensities, as it is highly valuable and has rarely made it to the literature.
 
 
-## Extracting raw intensities
+## Extracting intensity matrices
 
 The minfi R-package is a massive library that has set the standards of quality in epigenomics. 
 However, its extensive use of S4-object oriented language can make it hard for users to find and repurpose functions.
-In this tutorial, we have gathered together handy pieces of code for analysis of raw fluorescence intensities to ease the painstacking journey through minfi's dense documentation.
+In this section, we have gathered together handy pieces of code for analysis of raw fluorescence intensities to ease the painstacking journey through minfi's dense documentation.
 
 We firstly load all required libraries:
 
@@ -200,9 +202,9 @@ library(dbscan)
 library(Sushi)
 ```
 
-To read all IDAT files in a directory, we use the read.metharray.exp function. If additionally, we intend
+To read all IDAT files in a directory, we use the *read.metharray.exp* function. If additionally, we intend
 to read additional information such as the number of beads or the standard deviation of the fluorescence
-intensity channels, we will need to set the extended argument to TRUE.
+intensity channels, we will need to set the *extended* argument to TRUE.
 
 ```r
 setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/")
@@ -275,14 +277,14 @@ RedSD = assay(rgSet, "RedSD")     # Red SD across beads
 nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 ```
 
-To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which internally employs the unexported function minfi:::.preprocessRaw function), returning a list that contains methylated and unmethylated fluorescence intensities.
+To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which in turn employs the unexported function *minfi:::.preprocessRaw*), returning a list that contains methylated and unmethylated fluorescence intensities.
 
 ```r
 M_U = GR_to_UM(Red, Grn, rgSet)
 M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
 ```
 
-Internally, it assigns the methylated and unmethylated intensity values as following:
+Internally, it assigns the methylated and unmethylated intensity values as followed:
 
 | Probe Type    |  Methylated       |     Unmethylated  |
 |:-------------:|:-----------------:|:-----------------:|
@@ -304,14 +306,13 @@ offset = 100 # For numerical stability at low fluorescence intensities
 beta_value = M_U$M/(M_U$M + M_U$U + offset)
 ```
 
-M-values are also quite popular:
+Also quite popular, one can compute M-values as:
 ```r
 offset = 1 # For numerical stability at low fluorescence intensities
 M_value = log2((M_U$M + offset)/(M_U$U + offset))
 ```
 
 However, raw beta and M-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
-
 
 
 To clean up the workspace, we can perform:
