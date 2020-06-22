@@ -375,11 +375,37 @@ density_jitter_plot(beta_value, "cg00026186", pheno$sex)
 
 ```r
 set.seed(1); bGMM(M_U$M, M_U$U, "cg13293246", 1) # K = 1
+```
+
+![Alt text](img/bGMM1.png?raw=true "cg00026186 U/M plot")
+
+
+```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", 2) # K = 2
+```
+
+![Alt text](img/bGMM2.png?raw=true "cg00026186 U/M plot")
+
+
+```r
 set.seed(3); bGMM(M_U$M, M_U$U, "cg00814218", 3) # K = 3
+```
+
+![Alt text](img/bGMM3.png?raw=true "cg00026186 U/M plot")
+
+
+```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", 4) # K = 4
+```
+
+![Alt text](img/bGMM4.png?raw=true "cg00026186 U/M plot")
+
+
+```r
 set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", 5) # K = 5
 ```
+![Alt text](img/bGMM5.png?raw=true "cg00026186 U/M plot")
+
 
 ### CV and BC(CV)
 Compute CV per CpG and per sample
