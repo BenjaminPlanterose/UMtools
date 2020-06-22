@@ -303,7 +303,7 @@ However, raw beta and M-values should be avoided for further analysis as these d
 
 To clean up the workspace, we can perform:
 ```r
-rm(Grn , Red , GrnSD , RedSD, nBeads, nBeads_cg, beta_value, M_value); gc()
+rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 ```
 
 ## Quickly importing/exporting large matrices with data.table
@@ -335,25 +335,19 @@ pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are 
 
 ## UMtools in action
 
-### From methylation to the UM plane
+UMtools was developed to explore the effects of genetic artefacts on the fluorescence intensity signals of Illumina's DNA methylation microarrays. In addition to a gain of resolution by moving from univariate methylation value to the bivariate the U/M plane, it can additionally distinguish probe failure from intermediate methylation: when a probe fails, background fluorescence is acquired in both channels of roughly the same scale; as a result the ratio to the total intensity tends to 50 %.
 
-In the methylation scale, probe failure is indistinguishable from intermediate methylation. The reason is that when a probe fails, background fluorescence is acquired in both channels of roughly the same scale.
-
-Here, we show an example of probes targetting the Y-chromosome. Although it fails in females, the methylation tends towards 50 %.
-
+For example, this probe targets the Y-chromosome and hence fails in females:
 ```r
 density_jitter_plot(beta_value, "cg00026186", pheno$sex)
 ```
 ![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
 
-
 Unlike the methylation scale, this is obvious in the UM-plane where failed sampled cluster at the origin.
-
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 ```
 ![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
-
 
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
