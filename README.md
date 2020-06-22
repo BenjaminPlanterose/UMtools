@@ -464,19 +464,21 @@ For probes suffering from a genetic variant that causes probe failure, it a dual
 
 <img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\sigma_{ln(U %2B M)}}{\mu_{ln(U %2B M)}}">
 
-CV is a measure of noise-to-signal ratio and can be simply computed by compute_cv. CV is highly bimodal when a probe fails for some samples but not for others. Bimodality can be quantified by a *bimodality coefficient*:
+CV is a measure of noise-to-signal ratio and can be simply computed by *compute_cv*. CV is highly bimodal when a probe fails for some samples but not for others. Bimodality can be quantified by a *bimodality coefficient*:
 
-<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\gamma_{CV} %2B 1}{\kappa_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
+<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\^{\gamma}_{CV} %2B 1}{\^{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
 
-BC(CV) renders a good measure for ambivalency in probe failure.
+
+BC(CV) can be computed for all CpGs with *compute_BC_CV* and renders a good measure for ambivalency in probe failure.
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 density_jitter_plot(CV, "cg00026186", pheno$sex)
 BC_CV = compute_BC_CV(CV)
-BC_CV["cg00050873"]
-# cg00050873 
-#   1.128741
+BC_CV["cg00026186"]
+# cg00026186 
+#   1.188498 
+annotation["cg00026186", c("chr", "pos")]
 ```
 ![Alt text](img/jitter_CV.png?raw=true "cg00026186 jitter")
 
