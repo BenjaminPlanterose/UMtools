@@ -430,7 +430,7 @@ annotation["cg23186955", c("chr", "pos")] # chr3  16420793
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {1, 2, 3, 4, 5}.
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
@@ -458,9 +458,13 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 
 
-### Quantifying ambivalency in probe failure
+### Quantifying epigenome-wide ambivalency in probe failure
 
-density_jitter_plot can accept any continous variable such as beta values:
+For probes suffering from a genetic variant that causes probe failure, it a duality in probe efficiency (for some individuals it fails, for others it does not). We first define, CV, as the coefficient of variation of the log of the total intensity computed as:
+
+
+
+<img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\sigma_ln(U %2B M)}{\mu_ln(U+M)}">
 
 
 ```r
