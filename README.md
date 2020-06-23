@@ -63,10 +63,11 @@ gc()
 
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
-The Beadchip technology is the basis of Illumina DNA methylation microarrays. On the one hand, it is a probe-based approach where hundreds of thousands of copies of a specific oligonucleotides lie on the surface of silica beads. On the other hand, The microarray itself consists of a silica substrate with uniformly interspaced microwells.
+The Beadchip technology is the basis of Illumina DNA methylation microarrays. On the one hand, it is a probe-based approach where hundreds of thousands of copies of a specific 50 nucleotide-long probes lie on the surface of silica beads. On the other hand, The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 During the manufacture of the chip, a total of 622,399 types of beads are pooled together and deposited on
 the microarray. Subsequently, beads automatically self-assemble on the microarray's microwell. As a result, both
 the order and the number copies for a given bead type are random.
+To assign the correspondance between microwells and bead types, decoding is required. This is done during manufacture via consecutive hybridizations with other sets of probes that target the address, a 22 nucleotide-long oligonucleotide handle that links the bead to the probe (stored as a DMAP file).
 
 Strangely, although the 450K technology targets 485,512 cytosines, it employs 622,399 different probe oligonucleotides. The reason is the inclusion of control probes, which are not informative for CpG methylation, and Infinium type-I probes, that require two probes per CpG.
 
@@ -106,9 +107,9 @@ For a more thorough count, we have compiled all the probes included in the 450K:
 
   * SnpI (n = 25 x 2) - Two bead types per SNP.
 
-  * SnpII (n = 40) - One bead types per cytosine.
+  * SnpII (n = 40) - One bead type per cytosine.
 
-* orphan probes (n = 473) -  placed on the array for unknown purposes. 
+* orphan probes (n = 473) - placed on the array for unknown purposes. 
 
 
 In total, that makes:
@@ -116,7 +117,27 @@ In total, that makes:
     473 + 25*2 + 40 + 848 + 46,289 * 2 + 89,187 * 2 + 350,036 = 622,399 probes
 
 
-## The 450K protocol - Single base extension
+## The 450K protocol
+
+As a summary of the previous section, probes (50 nt) are tethered on the surface of each bead type (622,399 in total), connected via the address (23 nt). A random number for each bead type self-assemble on random micro-wells of the microarray. Decoding is performed to assign a bead type to each microwell, via consecutive hybridizations. Concerning CpG methylation detection, for the Infinium type-I assay, two bead types are required while for Infinium type-II assay, only a single bead type is required.
+
+With a working microarray with known mapping between bead types and positions (in the shape of a DMAP file), the preparation of samples goes as follows:
+
+  * Genomic DNA extraction.
+  
+  * Bisulfite conversion - Cytosine<sup>Unmethylated</sup> becomes Uracile and Cytosine<sup>Methylated</sup> remains Cytosine.
+  
+  * Whole-genome amplification - Uraciles become Thymine.
+  
+  * Enzymatic DNA fragmentation.
+  
+  * Hybridization to the microarray + Washing.
+  
+  * Infinium assay - incubation with a DNA polymerase and dideoxynucleotides-triphosphate (ddNTPs): ddATP and ddTTP labelled with biotin, ddCTP and ddGTP labelled with dinitrophenol (DNP). Upon single-based extension, extension cannot occur due to the dideoxy nature of the nucleotides. Staining (aka: XStain Beadchip) is carried out by incubating with fluorophore-labelled acceptors: Red fluorescing Cy5-labelled anti-DNP (targetting ddA/T) and Green fluorescing Cy3-labelled streptavidin (targetting ddC/G).
+  
+  * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan.
+  
+  * Fluorescence intensity information is Stored as two IDAT files, one per fluorescence channel.
 
 
 
