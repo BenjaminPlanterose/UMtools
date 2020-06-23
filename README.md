@@ -61,7 +61,8 @@ help(gc)
 gc()
 ```
 
-All R commands are idented on the Wiki. But if prefered, you may find them all in one script on the following link: [tutorial.R](https://github.com/BenjaminPlanterose/UMtools/tree/master/tutorial/tutorial.R)
+All R commands are idented on the Wiki. But if prefered, you may find them all in one script at the following link
+[tutorial.R](https://github.com/BenjaminPlanterose/UMtools/tree/master/tutorial/tutorial.R)
 
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
