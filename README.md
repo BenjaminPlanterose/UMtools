@@ -548,8 +548,10 @@ Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 ```
 ![Alt text](img/K_call4.png?raw=true "cg27024127")
 
+Please note that outliers are not included in any class and that the scale of the plot has been transformed to reduce the ellipticity of clusters in the U/M plane.
 
-On the other hand, function par_EW_Kcalling is the parallel-computing version for epigenome-wide K-calling:
+
+On the other hand, function par_EW_Kcalling is the parallel-computing version for epigenome-wide K-calling. Running on all chrY probes (n = 416), we observe the following:
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
@@ -559,6 +561,8 @@ table(K_vec)
 # 1   2
 # 38 378
 ```
+
+It was expected that given that probe targeting ChrY fail for females, that two clusters are formed. The observed K = 1 consist cross-reactive probes and a minor component of K-calling mistakes. For example, this supposedly Y-Chr CpG clearly displays a strong methylated signal in females:
 
 ```r
 names(which(K_vec == 1))[2] # "cg02494853"
