@@ -61,6 +61,8 @@ help(gc)
 gc()
 ```
 
+[tutorial.R](https://github.com/BenjaminPlanterose/UMtools/tutorial/tutorial.R)
+
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
 The Beadchip technology is the basis of Illumina DNA methylation microarrays. On the one hand, it is a probe-based approach where hundreds of thousands of copies of a specific 50 nucleotide-long probes lie on the surface of silica beads. On the other hand, The microarray itself consists of a silica substrate with uniformly interspaced microwells.
