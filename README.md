@@ -141,7 +141,7 @@ With a working microarray with known mapping between bead types and positions (i
   
   * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan.
   
-  * Fluorescence intensity information is Stored as two IDAT files, one per fluorescence channel.
+  * Fluorescence intensity information is stored as two IDAT files, one per fluorescence channel.
 
 
 ## Peaking into an IDAT file
@@ -200,7 +200,7 @@ We particularly highlight the standard deviation of fluorescence intensities, as
 
 ## Extracting fluorescence intensity matrices
 
-The Bioconductor-based **minfi** library is a huge R-package that has set the standards of quality in methylomics data analysis. Though it contains a vast amount of code that could find other applications, its deep encapsullation via an S4 object-oriented implementation can make it hard for users to find and repurpose low-level functions, especially unexported functions, which are not even on the documentation. As a result, minfi is designed to run as a standarized pipeline rather than adaptable toolset.
+The Bioconductor-based **minfi** library is a huge R-package that has set the standards of quality in methylomics data analysis. Though it contains a vast amount of code that could find other applications, its deep encapsullation via an S4 object-oriented implementation can make it hard for users to find and repurpose low-level functions, especially unexported functions, which are not even on the documentation. As a result, minfi is designed to run as a standarized pipeline rather than an adaptable toolset.
 
 Given that UMtools depends on some basic processing operations already established in the minfi library, we have compiled in this tutorial some handy functions, many of which unexported or not included on minfi's documentation. 
 
@@ -514,6 +514,9 @@ annotation["cg00026186", c("chr", "pos")]
 
 ### K-calling with visual output
 
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+
+
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 1
@@ -537,6 +540,9 @@ Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 
 ### Epigenome-wide K-calling
 
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+
+
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
 K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99, 1.01, 0.01), R = 2)
@@ -544,6 +550,7 @@ K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99
 
 ### Comethylation plots
 
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
 
 
 
