@@ -611,12 +611,15 @@ res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1
 This is not the case for a genetic artefact such as:
 
 ```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg11495604", sex = NULL)
 res = Visualize_cometh(annotation = annotation, CpG = 'cg11495604', distance = 1000,
                        L_bound = 0, R_bound = 2, beta_mat = beta_value,
                        cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
                        max_y = 5)
 annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198 KCNQ2;KCNQ2;KCNQ2;KCNQ2
 ```
+![Alt text](img/PF2.png?raw=true "cg11495604")
+
 ![Alt text](img/cometh_mQTL2.png?raw=true "cg11495604")
 
 
