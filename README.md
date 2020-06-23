@@ -514,10 +514,11 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 
 
 
-### K-calling with visual output
+### K-calling
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+However, when testing epigenome-wide, we cannot employ bGMM as we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm.
 
+The function Kcall_CpG provides of a visual output:
 
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
@@ -548,15 +549,24 @@ Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 ![Alt text](img/K_call4.png?raw=true "cg27024127")
 
 
-### Epigenome-wide K-calling
-
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
-
+On the other hand, function par_EW_Kcalling is the parallel-computing version for epigenome-wide K-calling:
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
 K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99, 1.01, 0.01), R = 2)
+table(K_vec)
+# K_vec
+# 1   2
+# 38 378
 ```
+
+```r
+names(which(K_vec == 1))[2] # "cg02494853"
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02494853", sex = pheno$sex)
+annotation["cg02494853", c("chr", "pos")] # chrY   4868397
+```
+![Alt text](img/y_cr.png?raw=true "cg02494853")
+
 
 ### Comethylation plots
 
