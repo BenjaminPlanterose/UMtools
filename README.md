@@ -1,20 +1,20 @@
 # UMtools
 ## An R-package for analysing Illumina DNA Methylation microarrays at the fluorescence intensity level
 
-
 #### Benjamin Planterose Jiménez, Manfred Kayser, Athina Vidaki
-
-### Department of Genetic Identification, Erasmus MC University Medical Centre Rotterdam, The Netherlands
-
-## License
+#### Department of Genetic Identification, Erasmus MC University Medical Centre Rotterdam, The Netherlands
+#### License
 [MIT](https://choosealicense.com/licenses/mit/)
 
 
-## Why UMtools? What is the purpose of this tutorial?
+## Why UMtools?
 
-There are a large variety of R-packages available to analyze data from Illumina DNA methylation microarrays. In order to ease general accesibility, these tend to isolate the user from the raw data and the complex underlying analysis. As a result, many users deploy standard pipelines without examining the raw data or critically assessing each step. Unlike available alternatives, UMtools aims to focus on low-level analysis of Illumina DNA methylation microarray data.
+Several R-packages have been developed to analyze data from Illumina's DNA methylation microarray platforms. In pursuit for the appealing of a wide range of end users, these however tend to sacrifice modularisation for simplicity: standarised pipelines are conceived to be deployed as one rather than being composed by repurposable modules. 
 
-With this tutorial we aim to increase the technical accesibility of Illumina's DNA methylation microarrays. We believe that there is more potential at the level of the IDAT file than what is currently being exploited. Particularly, the standard deviation of fluorescence across beads offers huge information for those researchers aiming to understanding the measurement error of the platform.
+As a result, the average user performs rudimentary examination of the raw data dissuaded by the scarcity of available tools targetting the beginning of the analysis. Very often, these tools already exist but are embedded within established pipelines, are unexported to the main R-package and lack written documentation. 
+
+For all the above, UMtools was developed as modular R-package that focuses on the low-level analysis of Illumina DNA methylation microarray data. Instead of the methylation ratio or beta-value, UMtools analyses fluorescence intensity means and standard deviation across beads, stored at the very heart of the IDAT file, Illumina's propietary format.
+
 
 ## Tested on
 
@@ -46,15 +46,14 @@ install_github("BenjaminPlanterose/UMtools")
 
 # About the tutorial
     
-Do not attempt to perform the UMtools tutorial without at least 8GB of RAM. Working with fluorescence intensities
-involve large matrices. To avoid issues, we recommend to always monitor resources via htop:
+With this tutorial we aim to increase the technical accesibility of the technology. Do not attempt to run the following code without at least 8GB of RAM. Working with fluorescence intensities involves large matrices. To avoid issues, we recommend to always monitor resources via htop:
 
 ```bash
 sudo apt-get install htop
 htop
 ```
 
-Also, when deleting large objects in R, you may call the garbage collector:
+Also, when deleting large objects in R, you may call the garbage collector to quickly repurpose RAM memory:
 
 ```r
 help(gc)
