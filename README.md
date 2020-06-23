@@ -45,14 +45,16 @@ install_github("BenjaminPlanterose/UMtools")
 
 # About the tutorial
     
-With this tutorial we aim to increase the technical accesibility of the technology. Do not attempt to run the following code without at least 8GB of RAM. Working with fluorescence intensities involves large matrices. To avoid issues, we recommend to always monitor resources via htop:
+With this tutorial we aim to increase the technical accesibility of the technology. We cover topics for which information is hard to find such as the Beadchip technology, control probes, the content of the IDAT file, as well as how to extract all of this information from an example dataset at GEO. In addition, we provide a summary of all the tools available at UMtools. 
+
+However, make sure to have at least 8GB of RAM available. Working with fluorescence intensities involves large matrices, meaning heavy RAM usage. To avoid any issues, we recommend to always monitor resources via htop if working from a Linux machine:
 
 ```bash
 sudo apt-get install htop
 htop
 ```
 
-Also, when deleting large objects in R, you may call the garbage collector to quickly repurpose RAM memory:
+Also, when deleting large objects in R, you may call the garbage collector to quickly repurpose RAM:
 
 ```r
 help(gc)
@@ -61,56 +63,60 @@ gc()
 
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
-The microarray itself consists of a silica substrate with uniformly interspaced microwells.
-Hundreds of thousands of copies of a specific oligonucleotide lie on the surface of silica beads.
+The Beadchip technology is the basis of Illumina DNA methylation microarrays. On the one hand, it is a probe-based approach where hundreds of thousands of copies of a specific oligonucleotides lie on the surface of silica beads. On the other hand, The microarray itself consists of a silica substrate with uniformly interspaced microwells.
 During the manufacture of the chip, a total of 622,399 types of beads are pooled together and deposited on
 the microarray. Subsequently, beads automatically self-assemble on the microarray's microwell. As a result, both
-the order and the number copies for a given bead type are random, hence requiring the decoding of the microarray.
+the order and the number copies for a given bead type are random.
 
-Although employing 622,399 probe oligonucleotides, the 450K technology targets 485,512 cytosines. We register here the count of probes. To begin with, 450K combines three types of probes concerning detection:
+Strangely, although the 450K technology targets 485,512 cytosines, it employs 622,399 different probe oligonucleotides. The reason is the inclusion of control probes, which are not informative for CpG methylation, and Infinium type-I probes, that require two probes per CpG.
 
-* Type I (n = 135,476 x 2) - two bead types per cytosine 
+For a more thorough count, we have compiled all the probes included in the 450K:
 
-  * Type-I Green (n = 46,289 x 2) - Quantification is informative only in the Green channel
+* Type I (n = 135,476 x 2) - two bead types per cytosine.
+
+  * Type-I Green (n = 46,289 x 2) - Quantification is informative only in the Green channel.
   
-  * Type-I Red (n = 89,187 x 2) - Quantification is informative only in the Red channel
+  * Type-I Red (n = 89,187 x 2) - Quantification is informative only in the Red channel.
   
-* Type-II (n = 350,036): one bead type per cytosine, quantification is informative in both channels
+* Type-II (n = 350,036): one bead type per cytosine, quantification is informative in both channels.
 
-In addition, there are a wide range of quality control probes (n = 848):
+* Control probes (n = 848).
 
-* Staining (n = 4)
+  * Staining (n = 4).
 
-* extension (n = 4)
+  * extension (n = 4).
 
-* hybridization (n = 3)
+  * hybridization (n = 3).
 
-* target removal (n = 2)
+  * target removal (n = 2).
 
-* bisulfite conversion I and II (n = 12 and 4)
+  * bisulfite conversion I and II (n = 12 and 4).
 
-* specificity I and II (n = 12 and 3) 
+  * specificity I and II (n = 12 and 3).
 
-* non-polymorphic (n = 4)
+  * non-polymorphic (n = 4).
 
-* negative control (n = 613)
+  * negative control (n = 613).
 
-* restoration (n = 1)
+  * restoration (n = 1).
 
-* normalization (n = 186).
+  * normalization (n = 186).
 
-As well, some probes target SNPs, included for assessing sample mix-up (n = 65):
+* SNP-targetting probes (n = 65) - included for assessing sample mix-up.
 
-* SnpI (n = 25 x 2)
+  ** SnpI (n = 25 x 2) - Two bead types per SNP.
 
-* SnpII (n = 40)
+  ** SnpII (n = 40) - One bead types per cytosine.
 
-Finally, there 473 orphan probes, placed on the array for unknown purposes. In total, that makes:
+* orphan probes (n = 473) -  placed on the array for unknown purposes. 
+
+
+In total, that makes:
 
     473 + 25*2 + 40 + 848 + 46,289 * 2 + 89,187 * 2 + 350,036 = 622,399 probes
 
 
-## The 450K protocol
+## The 450K protocol - Single base extension
 
 
 
