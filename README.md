@@ -371,6 +371,7 @@ UMtools was initially developed to characterise the influence of genetic artefac
 Moving from univariate methylation value to the bivariate the U/M plane not only offers a gain of resolution, but also the possibility to distinguish probe failure from intermediate methylation: when a probe fails, background fluorescence is acquired in both channels of roughly the same scale; as a result the ratio to the total intensity tends to 50 %. For example, the following probe targets the Y-chromosome and hence fails in females, giving rise to beta-values tending towards 0.5 (slightly skewed to the left by the established offset):
 ```r
 density_jitter_plot(beta_value, "cg00050873", pheno$sex)
+annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 ![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
 
@@ -441,7 +442,7 @@ annotation["cg17004290", c("chr", "pos")] # chr4 108853384
 Sometimes, two SNPs interact giving rise to a mixture between probe failure and SNP confused for one of the epialleles:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg27024127", sex = NULL)
-annotation["cg27024127", c("chr", "pos")] # chr4 108853384
+annotation["cg27024127", c("chr", "pos")] # chr8  27522576
 ```
 ![Alt text](img/2SNP.png?raw=true "cg27024127 U/M plot")
 
@@ -502,14 +503,14 @@ BC(CV) can be computed for all CpGs with *compute_BC_CV* and renders a good meas
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
-density_jitter_plot(CV, "cg00026186", pheno$sex)
+density_jitter_plot(CV, "cg00050873", pheno$sex)
 BC_CV = compute_BC_CV(CV)
-BC_CV["cg00026186"]
-# cg00026186 
-#   1.188498 
-annotation["cg00026186", c("chr", "pos")]
+BC_CV["cg00050873"]
+# cg00050873 
+#   1.128741  
+annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
-![Alt text](img/jitter_CV.png?raw=true "cg00026186 jitter")
+![Alt text](img/jitter_CV.png?raw=true "cg00050873 jitter")
 
 
 
@@ -522,21 +523,29 @@ As we have seen in the previous section, the formation of clusters in the UM pla
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 1
 ```
+![Alt text](img/K_call1.png?raw=true "cg15771735")
+
 
 ```r
 Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 2
 ```
+![Alt text](img/K_call2.png?raw=true "cg03398919")
+
 
 ```r
 Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 3
 ```
+![Alt text](img/K_call3.png?raw=true "cg00814218")
+
+
 
 ```r
 Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 4
 ```
+![Alt text](img/K_call4.png?raw=true "cg27024127")
 
 
 ### Epigenome-wide K-calling

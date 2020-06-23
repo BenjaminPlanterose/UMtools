@@ -5,9 +5,19 @@
 #' @return A vector of coefficient of bimodality per CpG, \code{BC}
 #' @examples
 #' compute_BC_CV(CV)
-compute_BC_CV <- function(CV)
+compute_BC_CV <- function(CV, ncores = NULL)
 {
-  BC = sapply(1:nrow(CV), function(x) bimodality_coefficient(CV[x, ]))
-  names(BC) = rownames(CV)
-  return(BC)
+  if(is.null(ncores))
+  {
+    np <- detectCores(logical = FALSE)
+  }
+
+  cl <- makeCluster(np)
+  clusterExport(cl, c("bimodality_coefficient"), envir=environment())
+  r <- parSapply(cl = cl, X = 1:nrow(CV), FUN = function(x) bimodality_coefficient(CV[x, ]))
+  stopCluster(cl)
+
+  names(r) <- rownames(CV)
+  return(r)
 }
+
