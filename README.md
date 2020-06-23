@@ -499,7 +499,7 @@ CV is a measure of noise-to-signal ratio and can be simply computed by *compute_
 <img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
 
 
-BC(CV) can be computed for all CpGs with *compute_BC_CV* and renders a good measure for ambivalency in probe failure.
+BC(CV) can be computed for all CpGs with *compute_BC_CV*, rendering a good measure for ambivalency in probe failure.
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
@@ -516,9 +516,9 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 
 ### K-calling
 
-However, when testing epigenome-wide, we cannot employ bGMM as we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm.
+Cluster formation in the UM plane cannot be tested epigenome-wide by bGMM since we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm.
 
-The function Kcall_CpG provides of a visual output:
+On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that the scale of the plot has been transformed to reduce the ellipticity of clusters in the U/M plane.
 
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
@@ -548,10 +548,8 @@ Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 ```
 ![Alt text](img/K_call4.png?raw=true "cg27024127")
 
-Please note that outliers are not included in any class and that the scale of the plot has been transformed to reduce the ellipticity of clusters in the U/M plane.
 
-
-On the other hand, function par_EW_Kcalling is the parallel-computing version for epigenome-wide K-calling. Running on all chrY probes (n = 416), we observe the following:
+On the other hand, function *par_EW_Kcalling* is the parallel-computing version for epigenome-wide K-calling. Running on all chrY probes (n = 416), we observe the following:
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
@@ -562,7 +560,7 @@ table(K_vec)
 # 38 378
 ```
 
-It was expected that given that probe targeting ChrY fail for females, that two clusters are formed. The observed K = 1 consist cross-reactive probes and a minor component of K-calling mistakes. For example, this supposedly Y-Chr CpG clearly displays a strong methylated signal in females:
+It was expected that given that probe targeting ChrY fail for females, that two clusters are always formed. The observed K = 1 probes consist of cross-reactive probes and a minor component of K-calling mistakes. For example, this supposedly Y-Chr CpG clearly displays a strong methylated signal in females (thus, cross-reactive):
 
 ```r
 names(which(K_vec == 1))[2] # "cg02494853"
@@ -574,7 +572,66 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 
 ### Comethylation plots
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+Finally, the formation of clusters is not a strict signature for a genetic artefact. It is possible that nearby CpGs, not affecting the Infinium assay in any way, influence the methylation status of the region: these are the so-called methylation quantitative trait loci (meQTL).
+
+
+This CpG is forming three clusters:
+```r
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg14911689", sex = NULL)
+annotation["cg14911689", c("chr", "pos", "UCSC_RefGene_Name")] # chr12    739980    NINJ2
+```
+![Alt text](img/mQTL.png?raw=true "cg14911689")
+
+
+However, we observe neighbour CpGs form similar shapes:
+
+```r
+annotation <- annotation[order(annotation$chr, annotation$pos),]
+pos <- which(rownames(annotation) == "cg14911689")
+UM_plot(M = M_U$M, U = M_U$U, CpG = rownames(annotation)[pos-1], sex = NULL)
+UM_plot(M = M_U$M, U = M_U$U, CpG = rownames(annotation)[pos+1], sex = NULL)
+```
+
+![Alt text](img/mQTL2.png?raw=true "cg26371957")
+![Alt text](img/mQTL3.png?raw=true "cg26654770")
+
+
+Moreover, we can examine if neighbouring CpGs methylation status is correlated via:
+
+```r
+res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1000,
+                       L_bound = 3, R_bound = 2, beta_mat = beta_value,
+                       cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
+                       max_y = 5)
+```
+
+![Alt text](img/cometh_mQTL.png?raw=true "cg01201512")
+
+
+This is not the case for a genetic artefact such as:
+
+```r
+res = Visualize_cometh(annotation = annotation, CpG = 'cg11495604', distance = 1000,
+                       L_bound = 0, R_bound = 2, beta_mat = beta_value,
+                       cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
+                       max_y = 5)
+annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198 KCNQ2;KCNQ2;KCNQ2;KCNQ2
+```
+![Alt text](img/cometh_mQTL2.png?raw=true "cg11495604")
+
+
+Only with the exception of fields of genetic variants such as in HLA loci
+```r
+res = Visualize_cometh(annotation = annotation, CpG = 'cg00211215', distance = 200,
+                       L_bound = 3, R_bound = 0, beta_mat = beta_value,
+                       cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
+                       max_y = 5)
+annotation["cg00211215", c("chr", "pos", "UCSC_RefGene_Name")] # chr6  32552246   HLA-DRB1
+```
+![Alt text](img/cometh_mQTL3.png?raw=true "cg11495604")
+
+
+
 
 
 
