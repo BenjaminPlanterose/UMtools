@@ -490,7 +490,8 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 For probes suffering from a genetic variant that causes probe failure, it a duality in probe efficiency (for some individuals it fails, for others it does not). We first define, CV, as the coefficient of variation of the log of the total intensity defined as:
 
-<img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\sigma_{ln(U %2B M)}}{\mu_{ln(U %2B M)}}">
+<img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\hat{\sigma}_{ln(U %2B M)}}{\hat{\mu}_{ln(U %2B M)}}">
+
 
 CV is a measure of noise-to-signal ratio and can be simply computed by *compute_cv*. CV is highly bimodal when a probe fails for some samples but not for others. Bimodality can be quantified by a *bimodality coefficient*:
 
