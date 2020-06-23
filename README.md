@@ -69,7 +69,7 @@ the microarray. Subsequently, beads automatically self-assemble on the microarra
 the order and the number copies for each bead type are random.
 To assign the correspondance between microwells and bead types, decoding is required. This is done during manufacture via consecutive hybridizations with other sets of probes that target the address, a 22 nucleotide-long oligonucleotide handle that links the bead to the probe (stored as a DMAP file).
 
-Detection of DNA methylation is done by coupling single-nucleotide variant detection with bisulfite conversion, by which unmethylated cytosines are converted to uraciles while leaving methylated cytosines unchanged. Two approaches are simulataneously performed on the microarray:
+Detection of DNA methylation is done by coupling single-nucleotide variant detection with bisulfite conversion, by which unmethylated cytosines are converted to uraciles while leaving methylated cytosines unchanged. Two approaches are simultaneously performed on the microarray:
 
   * Infinium type-II: A single probe targets both epialleles by performing single base extension at CpG site positions +1 or +2 (depending on which strand is targetted). Thus, the addition of the nucleotide is dependent of the methylation status. As a result, Type-II probes are informative in both channels.
   
@@ -129,9 +129,9 @@ With a working microarray with known mapping between bead types and positions (i
 
   * Genomic DNA extraction.
   
-  * Bisulfite conversion - Cytosine<sup>Unmethylated</sup> becomes Uracile and Cytosine<sup>Methylated</sup> remains Cytosine.
+  * Bisulfite conversion - Cytosines<sup>Unmethylated</sup> become Uraciles and Cytosines<sup>Methylated</sup> remain Cytosines.
   
-  * Whole-genome amplification - Uraciles become Thymine.
+  * Whole-genome amplification - Uraciles become Thymines.
   
   * Enzymatic DNA fragmentation.
   
