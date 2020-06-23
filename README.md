@@ -459,7 +459,7 @@ annotation["cg23186955", c("chr", "pos")] # chr3  16420793
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques for the assignation of clusters. The most succesful approach for those cases when the number of expected clusters is known was the bivariate Gaussian mixture model. We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques in the UM plane. The most succesful approach in cases where the number of expected clusters is known, were bivariate Gaussian mixture models (bGMMs). We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
@@ -489,29 +489,32 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 ### Quantifying epigenome-wide ambivalency in probe failure
 
-For probes suffering from a genetic variant that causes probe failure, it a duality in probe efficiency (for some individuals it fails, for others it does not). We first define, CV, as the coefficient of variation of the log of the total intensity defined as:
+For probes suffering from a genetic variant that causes probe failure, a duality in probe efficiency can be observed: for some individuals it fails, for others it does not. We first define, CV, as the coefficient of variation of the log of the total intensity, defined as:
 
 <img src="https://render.githubusercontent.com/render/math?math=CV_{ln(U %2B M)} = \dfrac{\hat{\sigma}_{ln(U %2B M)}}{\hat{\mu}_{ln(U %2B M)}}">
 
-
-CV is a measure of noise-to-signal ratio and can be simply computed by *compute_cv*. CV is highly bimodal when a probe fails for some samples but not for others. Bimodality can be quantified by a *bimodality coefficient*:
-
-<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
-
-
-BC(CV) can be computed for all CpGs with *compute_BC_CV*, rendering a good measure for ambivalency in probe failure.
+CV is a measure of noise-to-signal ratio and can be simply computed by *compute_cv*. CV is highly bimodal when a probe fails due to a genetic artefact.
 
 ```r
 CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 density_jitter_plot(CV, "cg00050873", pheno$sex)
+```
+![Alt text](img/jitter_CV.png?raw=true "cg00050873 jitter")
+
+
+Bimodality can be quantified by a *bimodality coefficient*:
+
+<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
+
+BC(CV) can be computed for all CpGs with *compute_BC_CV*, rendering a good measure for ambivalency in probe failure.
+
+```r
 BC_CV = compute_BC_CV(CV)
 BC_CV["cg00050873"]
 # cg00050873 
 #   1.128741  
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
-![Alt text](img/jitter_CV.png?raw=true "cg00050873 jitter")
-
 
 
 ### K-calling
