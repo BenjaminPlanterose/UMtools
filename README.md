@@ -104,9 +104,9 @@ For a more thorough count, we have compiled all the probes included in the 450K:
 
 * SNP-targetting probes (n = 65) - included for assessing sample mix-up.
 
-  ** SnpI (n = 25 x 2) - Two bead types per SNP.
+  * SnpI (n = 25 x 2) - Two bead types per SNP.
 
-  ** SnpII (n = 40) - One bead types per cytosine.
+  * SnpII (n = 40) - One bead types per cytosine.
 
 * orphan probes (n = 473) -  placed on the array for unknown purposes. 
 
