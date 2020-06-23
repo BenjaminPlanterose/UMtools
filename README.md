@@ -64,14 +64,18 @@ gc()
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
 The Beadchip technology is the basis of Illumina DNA methylation microarrays. On the one hand, it is a probe-based approach where hundreds of thousands of copies of a specific 50 nucleotide-long probes lie on the surface of silica beads. On the other hand, The microarray itself consists of a silica substrate with uniformly interspaced microwells.
-During the manufacture of the chip, a total of 622,399 types of beads are pooled together and deposited on
+During the manufacture of the chip, a total of 622,399 types of beads, each bearing a different probe, are pooled together and deposited on
 the microarray. Subsequently, beads automatically self-assemble on the microarray's microwell. As a result, both
-the order and the number copies for a given bead type are random.
+the order and the number copies for each bead type are random.
 To assign the correspondance between microwells and bead types, decoding is required. This is done during manufacture via consecutive hybridizations with other sets of probes that target the address, a 22 nucleotide-long oligonucleotide handle that links the bead to the probe (stored as a DMAP file).
 
-Strangely, although the 450K technology targets 485,512 cytosines, it employs 622,399 different probe oligonucleotides. The reason is the inclusion of control probes, which are not informative for CpG methylation, and Infinium type-I probes, that require two probes per CpG.
+Detection of DNA methylation is done by coupling single-nucleotide variant detection with bisulfite conversion, by which unmethylated cytosines are converted to uraciles while leaving methylated cytosines unchanged. Two approaches are simulataneously performed on the microarray:
 
-For a more thorough count, we have compiled all the probes included in the 450K:
+  * Infinium type-II: A single probe targets both epialleles by performing single base extension at CpG site positions +1 or +2 (depending on which strand is targetted). Thus, the addition of the nucleotide is dependent of the methylation status. As a result, Type-II probes are informative in both channels.
+  
+  * Infinium type-I: Relies on two probes, each targetting either the unmethylated converted CpG or the methylated unconverted CpG. Single base extension occurs one nucleotide before or after the CpG site at positions 0 or +3 (depending on which strand is targetted). Thus, the addition of the nucleotide is independent of the methylation status, and hence, both probes are registed in the same fluorescence channel but at two different beadtypes.
+  
+The addition of type-I probes together with the inclusion of control bead types that are not informative for CpG methylation explains why 485,512 cytosines are targetted by 622,399 different bead types. For a thorough count in which we have compiled all the probes included in the 450K:
 
 * Type I (n = 135,476 x 2) - two bead types per cytosine.
 
@@ -133,12 +137,11 @@ With a working microarray with known mapping between bead types and positions (i
   
   * Hybridization to the microarray + Washing.
   
-  * Infinium assay - incubation with a DNA polymerase and dideoxynucleotides-triphosphate (ddNTPs): ddATP and ddTTP labelled with biotin, ddCTP and ddGTP labelled with dinitrophenol (DNP). Upon single-based extension, extension cannot occur due to the dideoxy nature of the nucleotides. Staining (aka: XStain Beadchip) is carried out by incubating with fluorophore-labelled acceptors: Red fluorescing Cy5-labelled anti-DNP (targetting ddA/T) and Green fluorescing Cy3-labelled streptavidin (targetting ddC/G).
+  * Infinium assay - incubation with a DNA polymerase and dideoxynucleotides-triphosphate (ddNTPs): ddATP and ddTTP labelled with biotin, ddCTP and ddGTP labelled with dinitrophenol (DNP). Upon single-based extension, elongation cannot continue due to the dideoxy nature of the incorporated nucleotide. Staining is carried out by incubating with fluorophore-labelled acceptors: Red-fluorescing Cy5-labelled anti-DNP (targetting ddA/T) and Green-fluorescing Cy3-labelled streptavidin (targetting ddC/G).
   
   * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan.
   
   * Fluorescence intensity information is Stored as two IDAT files, one per fluorescence channel.
-
 
 
 ## Peaking into an IDAT file
@@ -199,7 +202,7 @@ We particularly highlight the standard deviation of fluorescence intensities, as
 
 The Bioconductor-based **minfi** library is a huge R-package that has set the standards of quality in methylomics data analysis. Though it contains a vast amount of code that could find other applications, its deep encapsullation via an S4 object-oriented implementation can make it hard for users to find and repurpose low-level functions, especially unexported functions, which are not even on the documentation. As a result, minfi is designed to run as a standarized pipeline rather than adaptable toolset.
 
-Given that UMtools depends on some basic processing operations already established in the minfi library, we have compiled in this tutorial some handy functions to ease the painstacking journey through minfi's dense documentation. 
+Given that UMtools depends on some basic processing operations already established in the minfi library, we have compiled in this tutorial some handy functions, many of which unexported or not included on minfi's documentation. 
 
 We firstly load all required libraries:
 
@@ -265,7 +268,7 @@ head(TypeII[, 1:3], n = 2)
 # 2  cg00061679    28780415
 ```
 
-For a more thorough annotation of type-I and II probes, we can execute:
+For a biological annotation of the CpGs targetted by type-I and II probes, we can execute:
 
 ```r
 annotation <- getAnnotation(rgSet)
@@ -326,7 +329,7 @@ offset = 1 # For numerical stability at low fluorescence intensities
 M_value = log2((M_U$M + offset)/(M_U$U + offset))
 ```
 
-However, raw beta and M-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi,  wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
+However, raw beta and M-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi, wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
 
 
 To clean up the workspace, we can perform:
