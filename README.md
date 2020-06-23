@@ -75,7 +75,7 @@ Detection of DNA methylation is done by coupling single-nucleotide variant detec
   
   * Infinium type-I: Relies on two probes, each targetting either the unmethylated converted CpG or the methylated unconverted CpG. Single base extension occurs one nucleotide before or after the CpG site at positions 0 or +3 (depending on which strand is targetted). Thus, the addition of the nucleotide is independent of the methylation status, and hence, both probes are registed in the same fluorescence channel but at two different beadtypes.
   
-The addition of type-I probes together with the inclusion of control bead types that are not informative for CpG methylation explains why 485,512 cytosines are targetted by 622,399 different bead types. For a thorough count in which we have compiled all the probes included in the 450K:
+The addition of type-I probes together with the inclusion of control bead types that are not informative for CpG methylation explains why 485,512 cytosines are targetted by 622,399 different bead types. We have compiled a thorough count all the probes included in the 450K:
 
 * Type I (n = 135,476 x 2) - two bead types per cytosine.
 
