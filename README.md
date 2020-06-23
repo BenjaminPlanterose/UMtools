@@ -61,7 +61,7 @@ help(gc)
 gc()
 ```
 
-[tutorial.R](https://github.com/BenjaminPlanterose/UMtools/tutorial/tutorial.R)
+[tutorial.R](https://github.com/BenjaminPlanterose/UMtools/tree/master/tutorial)
 
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
