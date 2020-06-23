@@ -3,8 +3,7 @@
 
 #### Benjamin Planterose Jiménez, Manfred Kayser, Athina Vidaki
 #### Department of Genetic Identification, Erasmus MC University Medical Centre Rotterdam, The Netherlands
-#### License
-[MIT](https://choosealicense.com/licenses/mit/)
+
 
 
 ## Why UMtools?
