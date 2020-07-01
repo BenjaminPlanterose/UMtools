@@ -2,20 +2,20 @@
 % Please edit documentation in R/beads_GR_to_UM.R
 \name{beads_GR_to_UM}
 \alias{beads_GR_to_UM}
-\title{Transforms the matrix of number of beads from Green/Red to Unmethylated/Methylated channels}
+\title{Transforms nBeads from probes to CpGs}
 \usage{
 beads_GR_to_UM(nBeads, rgSet)
 }
 \arguments{
-\item{nBeads}{A matrix containing the number of beads per probe and per sample (probes as rows, samples as columns)}
+\item{nBeads}{A matrix containing the number of beads (probes as rows, samples as columns)}
 
 \item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
 }
 \value{
-A matrix containing number of beads per CpG and per sample, \code{nBeads_cg}, (CpGs as rows, samples as columns)
+\code{nBeads_cg}: a matrix containing number of beads (CpGs as rows, samples as columns)
 }
 \description{
-Transforms
+Transforms the matrix of number of beads from Green/Red to Unmethylated/Methylated channels
 }
 \details{
 Illumina DNA methylation microarrays detection rely on three types of probes:
@@ -31,5 +31,7 @@ This requires a criteria for type-I probes for which 2 probes target the same Cp
 the minimum number between the two probes targetting a type-I probe is chosen.
 }
 \examples{
+rgSet = read.metharray.exp(getwd(), extended = TRUE)
+nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 beads_GR_to_UM(nBeads, rgSet)
 }

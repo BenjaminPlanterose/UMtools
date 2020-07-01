@@ -24,6 +24,8 @@ bGMM(
 \item{CpG}{A CpG identifier (e.g. "cg15771735")}
 
 \item{K}{Targetted number of clusters}
+
+\item{...}{Control functions for EMCluster}
 }
 \value{
 A vector of classes in the same order as the columns
@@ -36,5 +38,9 @@ It employs the function init.EM from the R-package EMCluster that fits a GMM emp
 maximization algorithm. Run help(initEM) for more information.
 }
 \examples{
-bGMM(M, U, "cg00814218", 3)
+rgSet = read.metharray.exp(getwd(), extended = TRUE)
+Grn = assay(rgSet, "Green")       # Green mean across beads
+Red = assay(rgSet, "Red")         # Red mean across beads
+M_U = GR_to_UM(Red, Grn, rgSet)
+bGMM(M_U$M, M_U$U, "cg00814218", 3)
 }

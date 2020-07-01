@@ -7,8 +7,15 @@
 #' @param U Unmethylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)
 #' @return A matrix \code{CV} (CpGs as rows, samples as columns)
 #' @examples
-#' GR_to_UM(Red, Grn, rgSet)
-compute_cv = function(M_SD, U_SD, M, U, alpha1 = 100, alpha2 = 1)
+#' rgSet = read.metharray.exp(getwd(), extended = TRUE)
+#' Grn = assay(rgSet, "Green")       # Green mean across beads
+#' Red = assay(rgSet, "Red")         # Red mean across beads
+#' M_U = GR_to_UM(Red, Grn, rgSet)
+#' GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
+#' RedSD = assay(rgSet, "RedSD")     # Red SD across beads
+#' GR_to_UM(RedSD, GrnSD, rgSet)
+#' compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
+compute_CV = function(M_SD, U_SD, M, U, alpha1 = 100, alpha2 = 1)
 {
   SD_logT = (M_SD + U_SD + alpha1)/(M + U + alpha1)
   mu_logT = log(M + U) - (SD_logT^2)/2 + alpha2

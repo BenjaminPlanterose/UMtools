@@ -22,13 +22,19 @@
 #' @param rgSet An rgSet object imported by minfi (see minfi::read.metharray.exp for details)
 #' @return A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
 #' @examples
+#' rgSet = read.metharray.exp(getwd(), extended = TRUE)
+#' Grn = assay(rgSet, "Green")       # Green mean across beads
+#' Red = assay(rgSet, "Red")         # Red mean across beads
 #' GR_to_UM(Red, Grn, rgSet)
+#' GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
+#' RedSD = assay(rgSet, "RedSD")     # Red SD across beads
+#' GR_to_UM(RedSD, GrnSD, rgSet)
 GR_to_UM <- function(Red, Grn, rgSet)
 {
-  locusNames <- getManifestInfo(rgSet, "locusNames")
-  TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
-  TypeI.Green <- getProbeInfo(rgSet, type = "I-Green")
-  TypeII <- getProbeInfo(rgSet, type = "II")
+  locusNames <- minfi::getManifestInfo(rgSet, "locusNames")
+  TypeI.Red <- minfi::getProbeInfo(rgSet, type = "I-Red")
+  TypeI.Green <- minfi::getProbeInfo(rgSet, type = "I-Green")
+  TypeII <- minfi::getProbeInfo(rgSet, type = "II")
   M_and_U <- minfi:::.preprocessRaw(Red = Red, Green = Grn, locusNames = locusNames,
                                     TypeI.Red = TypeI.Red, TypeI.Green = TypeI.Green, TypeII = TypeII)
   list(M  = M_and_U[["M"]],

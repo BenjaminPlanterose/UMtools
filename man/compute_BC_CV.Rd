@@ -2,22 +2,32 @@
 % Please edit documentation in R/compute_BC_CV.R
 \name{compute_BC_CV}
 \alias{compute_BC_CV}
-\title{Computes bimodality per CpG across samples in a coefficient of variation matrix}
+\title{Computes BC(CV)}
 \usage{
-compute_BC_CV(CV, ncores = NULL)
+compute_BC_CV(CV, nCores = NULL)
 }
 \arguments{
 \item{CV}{A coefficient of variation matrix (probes as rows, samples as columns)}
+
+\item{nCores}{Number of cores to employ on this task}
 }
 \value{
 A vector of coefficient of bimodality per CpG, \code{BC}
 }
 \description{
-a
+Computes bimodality coefficient of the coefficient of variation per CpG across samples
 }
 \details{
 a
 }
 \examples{
+rgSet = read.metharray.exp(getwd(), extended = TRUE)
+Grn = assay(rgSet, "Green")       # Green mean across beads
+Red = assay(rgSet, "Red")         # Red mean across beads
+M_U = GR_to_UM(Red, Grn, rgSet)
+GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
+RedSD = assay(rgSet, "RedSD")     # Red SD across beads
+GR_to_UM(RedSD, GrnSD, rgSet)
+CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 compute_BC_CV(CV)
 }

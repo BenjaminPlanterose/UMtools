@@ -644,6 +644,8 @@ annotation["cg00211215", c("chr", "pos", "UCSC_RefGene_Name")] # chr6  32552246 
 
 
 
+
+
 ### References
 
 B. Planterose *et al* (**2018**). Universal epigenetic dissimilarity: DNA methylation variation that is equivalent between monozygotic co-twins and unrelated individuals.

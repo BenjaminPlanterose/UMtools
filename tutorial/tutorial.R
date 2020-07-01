@@ -1,3 +1,16 @@
+setwd("/home/ben/Documents/Git/")
+install("UMtools")
+
+help(compute_CV)
+help(density_jitter_plot)
+help(export_bigmat)
+help(GR_to_UM)
+help(import_bigmat)
+help(Kcall_CpG)
+help(k_per_CpG)
+help(par_EW_Kcalling)
+help(UM_plot)
+help(Visualize_cometh)
 
 ## 1) Installation
 
@@ -20,6 +33,8 @@ install_github("BenjaminPlanterose/UMtools")
 
 # 2) Downloading example
 
+# Run in bash
+
 # wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar --wait=10 --limit-rate=50K
 # tar -xvf GSE104812_RAW.tar
 # find . -type f ! -name '*.idat.gz' -delete
@@ -29,7 +44,7 @@ install_github("BenjaminPlanterose/UMtools")
 # 3) Peaking into an IDAT
 
 library(illuminaio)
-setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/")
+setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
 example = illuminaio::readIDAT("GSM2808239_sample1_Grn.idat")
 names(example)
 # [1] "fileSize"  "versionNumber" "nFields"   "fields"  "nSNPsRead" "Quants" "MidBlock"
@@ -60,7 +75,7 @@ library(dbscan)
 library(Sushi)
 library(UMtools)
 
-setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/")
+setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 
 TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
@@ -121,7 +136,7 @@ rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 
 # 5) Quickly importing/exporting large matrices with data.table
 
-setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/")
+setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/") # Change this route to fit your system
 export_bigmat(M_U$M, "M.txt", nThread = 4)
 M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 
@@ -191,7 +206,7 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 
 ### Quantifying epigenome-wide ambivalency in probe failure
 
-CV = compute_cv(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
+CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 density_jitter_plot(CV, "cg00050873", pheno$sex)
 BC_CV = compute_BC_CV(CV)
 BC_CV["cg00050873"]

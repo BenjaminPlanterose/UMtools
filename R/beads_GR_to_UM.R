@@ -1,5 +1,5 @@
-#' Transforms the matrix of number of beads from Green/Red to Unmethylated/Methylated channels
-#' @description Transforms
+#' Transforms nBeads from probes to CpGs
+#' @description Transforms the matrix of number of beads from Green/Red to Unmethylated/Methylated channels
 #' @details
 #'Illumina DNA methylation microarrays detection rely on three types of probes:
 #' \itemize{
@@ -14,17 +14,19 @@
 #'the minimum number between the two probes targetting a type-I probe is chosen.
 #'
 #'
-#' @param nBeads A matrix containing the number of beads per probe and per sample (probes as rows, samples as columns)
+#' @param nBeads A matrix containing the number of beads (probes as rows, samples as columns)
 #' @param rgSet An rgSet object imported by minfi (see minfi::read.metharray.exp for details)
-#' @return A matrix containing number of beads per CpG and per sample, \code{nBeads_cg}, (CpGs as rows, samples as columns)
+#' @return \code{nBeads_cg}: a matrix containing number of beads (CpGs as rows, samples as columns)
 #' @examples
+#' rgSet = read.metharray.exp(getwd(), extended = TRUE)
+#' nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 #' beads_GR_to_UM(nBeads, rgSet)
 beads_GR_to_UM <- function(nBeads, rgSet)
 {
-  locusNames <- getManifestInfo(rgSet, "locusNames")
-  TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
-  TypeI.Green <- getProbeInfo(rgSet, type = "I-Green")
-  TypeII <- getProbeInfo(rgSet, type = "II")
+  locusNames <- minfi::getManifestInfo(rgSet, "locusNames")
+  TypeI.Red <- minfi::getProbeInfo(rgSet, type = "I-Red")
+  TypeI.Green <- minfi::getProbeInfo(rgSet, type = "I-Green")
+  TypeII <- minfi::getProbeInfo(rgSet, type = "II")
 
   nBeads_cg = matrix(NA, nrow = length(locusNames), ncol = ncol(rgSet))
   rownames(nBeads_cg) = locusNames

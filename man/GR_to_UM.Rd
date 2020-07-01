@@ -35,5 +35,11 @@ Methylated and unmethylated intensities are computed as followed:\tabular{lcr}{
 }
 }
 \examples{
+rgSet = read.metharray.exp(getwd(), extended = TRUE)
+Grn = assay(rgSet, "Green")       # Green mean across beads
+Red = assay(rgSet, "Red")         # Red mean across beads
 GR_to_UM(Red, Grn, rgSet)
+GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
+RedSD = assay(rgSet, "RedSD")     # Red SD across beads
+GR_to_UM(RedSD, GrnSD, rgSet)
 }
