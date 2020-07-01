@@ -20,9 +20,7 @@ For all the above, UMtools was developed as modular R-package that focuses on th
     Ubuntu 18.04.4 LTS (bionic)
     R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
     
-Contact b.planterosejimenez@erasmusmc.nl for any issues arising while running UMtools or simply [report an issue](https://github.com/BenjaminPlanterose/UMtools/issues)
-
-   
+For issues arising while running UMtools, either [report an issue](https://github.com/BenjaminPlanterose/UMtools/issues) or simply contact b.planterosejimenez@erasmusmc.nl
     
 ## Installation 
 
