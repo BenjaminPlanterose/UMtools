@@ -16,8 +16,8 @@
 #' bGMM(M_U$M, M_U$U, "cg00814218", 3)
 bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter = 2000, method = 'em.EM', EMC = .EMC)
 {
-  df = as.data.frame(cbind(M[CpG,], U[CpG, ]))
-  colnames(df) <- c('x', 'y')
+  m = M[CpG,]; u = U[CpG, ]
+  df = data.frame(x = 1 - 2/pi*atan((u+100)/(m+100)), y = log2(u + m + 100))
   ret <- EMCluster::init.EM(x = df, nclass = K, method = 'em.EM', min.n.iter = min.n.iter, lab = NULL, EMC = .EMC,
                  stable.solution = stable.solution, min.n = min.n)
   class_i <- EMCluster::assign.class(df, ret, return.all = FALSE)$class

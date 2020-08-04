@@ -5,16 +5,11 @@
 #' @return A vector of coefficient of bimodality per CpG, \code{BC}
 #' @examples
 #' compute_BC_CV(CV)
-k_per_CpG <- function(df, minPts = 25, reach = seq(0.328, 0.352, 0.004), R = 2)
+k_per_CpG <- function(df, minPts = 25, reach = seq(0.328, 0.352, 0.004))
 {
-  x = df$x
-  y = df$y
-  alpha1 = IQR(x)/R
-  alpha2 = IQR(y)/R
-
-  df = data.frame(x = log2(x + alpha1), y = log2(y + alpha2))
+  m = M[CpG,]; u = U[CpG,]
+  df = data.frame(x = 1 - 2/pi*atan((u+100)/(m+100)), y = log2(u + m + 100))
   df = as.data.frame(scale(df, center = T, scale = T))
-
   res = lapply(X = reach, FUN = function(x) dbscan::dbscan(df, eps = x, minPts)$cluster)
   res = lapply(res, table)
   res = lapply(res, function(x) x[names(x) != "0"])
