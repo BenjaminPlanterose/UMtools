@@ -2,22 +2,28 @@
 % Please edit documentation in R/GR_to_UM.R
 \name{GR_to_UM}
 \alias{GR_to_UM}
-\title{Transforms Green/Red fluorescence signals into Unmethylated/Methylated channels}
+\title{GR_to_UM}
 \usage{
-GR_to_UM(Red, Grn, rgSet)
+GR_to_UM(Red = NULL, Grn = NULL, rgSet, what = NULL, nBeads = NULL)
 }
 \arguments{
-\item{Red}{A red fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{Red}{Mean or SD Red fluorescence intensity matrix (probes as rows, samples as columns)}
 
-\item{Grn}{A green fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{Grn}{Mean or SD Green fluorescence intensity matrix (probes as rows, samples as columns)}
 
 \item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
+
+\item{what}{Either 'Mean', 'SD' or 'NBeads'}
+
+\item{nBeads}{A matrix containing the number of beads (probes as rows, samples as columns)}
 }
 \value{
-A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
+A list including matrices \emph{M} and \emph{U} (CpGs as rows, samples as columns) when \emph{what} is "Mean"
+or "SD" and or a matrix \emph{nBeads}, containing number of beads (CpGs as rows, samples as columns) when
+\emph{what} is equal to "NBeads".
 }
 \description{
-Transforms
+Transforms Green/Red fluorescence signals into Unmethylated/Methylated channels
 }
 \details{
 Illumina DNA methylation microarrays detection rely on three types of probes:
@@ -27,19 +33,35 @@ Illumina DNA methylation microarrays detection rely on three types of probes:
 \item type-II: 1 probe/address per CpG, informative in both Green and Red channels.
 }
 
-Methylated and unmethylated intensities are computed as followed:\tabular{lcr}{
+When \emph{what} is equal to "SD" or "Mean", Methylated and unmethylated intensities are computed as followed:\tabular{lcr}{
     \tab \strong{Methylated} \tab \strong{Unmethylated} \cr
    \strong{Type-II} \tab Green (addressA) \tab Red (addressA) \cr
    \strong{Type-I Red} \tab Red (addressB) \tab Red (addressA) \cr
    \strong{Type-I Green} \tab Green (addressB) \tab Green (addressA) \cr
 }
+
+
+Also, due to the beadchip technology, each probe has been assigned to a random number of beads.
+If \emph{what} == "NBeads", it converts the number of beads per probe and per sample to
+the number of beads per CpG and per sample. This requires a criteria for type-I probes for
+which 2 probes target the same CpG. In this case,the minimum number between the two probes
+targetting a type-I probe is chosen.
 }
 \examples{
-rgSet = read.metharray.exp(getwd(), extended = TRUE)
-Grn = assay(rgSet, "Green")       # Green mean across beads
-Red = assay(rgSet, "Red")         # Red mean across beads
-GR_to_UM(Red, Grn, rgSet)
-GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
-RedSD = assay(rgSet, "RedSD")     # Red SD across beads
-GR_to_UM(RedSD, GrnSD, rgSet)
+# Read IDAT files. Without the extended option, SD cannot be acquired
+rgSet <- read.metharray.exp(getwd(), extended = TRUE)
+
+# Green/Red mean to Unmethylated/Methylated mean intensities
+Grn <- assay(rgSet, "Green")
+Red <- assay(rgSet, "Red")
+UM <- GR_to_UM(Red = Red, Grn = Grn, rgSet = rgSet, what = "Mean")
+
+# Green/Red SD to Unmethylated/Methylated intensity SDs
+GrnSD <- assay(rgSet, "GreenSD")
+RedSD <-assay(rgSet, "RedSD")
+UM_SD <- GR_to_UM(Red = RedSD, Grn = GrnSD, rgSet = rgSet, what = "SD")
+
+# nBeads in probes to nBeads per CpG
+nBeads <- assay(rgSet, "NBeads")
+nBeads <- GR_to_UM(nBeads = nBeads, rgSet = rgSet, what = "NBeads")
 }

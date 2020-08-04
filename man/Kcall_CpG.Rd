@@ -4,15 +4,7 @@
 \alias{Kcall_CpG}
 \title{Transforms number of beads matrix from G/R to U/M}
 \usage{
-Kcall_CpG(
-  CpG,
-  M,
-  U,
-  minPts = 25,
-  plot = T,
-  reach = seq(0.328, 0.352, 0.004),
-  R = 2
-)
+Kcall_CpG(CpG, M, U, minPts = 25, plot = T, reach = seq(0.328, 0.352, 0.004))
 }
 \arguments{
 \item{nBeads}{A matrix containing the number of beads per probe and per sample (probes as rows, samples as columns)}

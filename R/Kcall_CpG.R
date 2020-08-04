@@ -6,18 +6,18 @@
 #' @return A matrix containing number of beads per CpG and per sample, \code{nBeads_cg}, (CpGs as rows, samples as columns)
 #' @examples
 #' beads_GR_to_UM(nBeads, rgSet)
-Kcall_CpG <- function(CpG, M, U, minPts = 25, plot = T, reach = seq(0.328, 0.352, 0.004))
+Kcall_CpG <- function(CpG, M, U, plot = T, minPts = 12, eps = 0.035)
 {
   m = M[CpG,]; u = U[CpG,]
-  df = data.frame(x = 1 - atan((u+100)/(m+100)), y = log2(u + m + 100))
-  df = as.data.frame(scale(df, center = T, scale = T))
+  df = data.frame(x = (m + 0)/(u + m + 100), y = log2(u + m + 100))
+  df$y = (df$y - min(df$y))/(max(df$y)) # Switch
   if(plot)
   {
-    db <- dbscan::dbscan(x = df, eps = mean(reach), minPts)
+    db <- dbscan::dbscan(x = df, eps = mean(eps), minPts)
     plot(df$x, df$y, col = as.factor(db$cluster), pch = 19, main = CpG)
   }
 
-  res = lapply(X = reach, FUN = function(x) dbscan::dbscan(df, eps = x, minPts)$cluster)
+  res = lapply(X = eps, FUN = function(x) dbscan::dbscan(df, eps = x, minPts)$cluster)
   res = lapply(res, table)
   res = lapply(res, function(x) x[names(x) != "0"])
   res = sapply(res, length)

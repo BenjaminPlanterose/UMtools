@@ -13,7 +13,8 @@ bGMM(
   min.n = NULL,
   min.n.iter = 2000,
   method = "em.EM",
-  EMC = .EMC
+  EMC = .EMC,
+  transform = TRUE
 )
 }
 \arguments{

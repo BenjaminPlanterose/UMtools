@@ -14,22 +14,29 @@
 #' Red = assay(rgSet, "Red")         # Red mean across beads
 #' M_U = GR_to_UM(Red, Grn, rgSet)
 #' bGMM(M_U$M, M_U$U, "cg00814218", 3)
-bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter = 2000, method = 'em.EM', EMC = .EMC)
+bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter = 2000, method = 'em.EM', EMC = .EMC, transform = TRUE)
 {
-  m = M[CpG,]; u = U[CpG, ]
-  df = data.frame(x = 1 - 2/pi*atan((u+100)/(m+100)), y = log2(u + m + 100))
+  df = data.frame(x = M[CpG,], y = U[CpG, ])
+
+  if(transform)
+  {
+    df = data.frame(x = m/(u + m + 100), y = log2(u + m + 100))
+    df$y = (df$y - min(df$y))/(max(df$y)) # Switch
+  }
   ret <- EMCluster::init.EM(x = df, nclass = K, method = 'em.EM', min.n.iter = min.n.iter, lab = NULL, EMC = .EMC,
                  stable.solution = stable.solution, min.n = min.n)
   class_i <- EMCluster::assign.class(df, ret, return.all = FALSE)$class
 
   if(K == 1 | K > 4)
   {
+    df = data.frame(x = m, y = u)
     plot(df$x, df$y, col = as.factor(class_i), pch = 19, main = CpG, xlab = 'M', ylab = 'U',
          xlim = c(0, max(df$x) + 100), ylim = c(0, max(df$y) + 100))
     return(as.factor(class_i))
   }
   else if(K == 2)
   {
+    df = data.frame(x = m, y = u)
     coefA = aggregate(.~class_i, df[c("x")], mean)$x
     coefB = aggregate(.~class_i, df[c("y")], mean)$y
     pos1 = which.min((coefA + coefB)/2); pos2 = which.max((coefA + coefB)/2);
@@ -45,6 +52,7 @@ bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter 
   }
   else if(K == 3)
   {
+    df = data.frame(x = m, y = u)
     coefs <- numeric()
     lm.mod <- lm(df$y[class_i == 1] ~ df$x[class_i == 1]); coefs[1] <- unname(lm.mod$coefficients[2])
     lm.mod <- lm(df$y[class_i == 2] ~ df$x[class_i == 2]); coefs[2] <- unname(lm.mod$coefficients[2])
@@ -62,6 +70,7 @@ bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter 
   }
   else if(K == 4)
   {
+    df = data.frame(x = m, y = u)
     df_norm = df/data.frame(x = rep(max(df$x), nrow(df)), y = rep(max(df$y), nrow(df)))
     df_norm$label = class_i
     coefA = aggregate(. ~ label, df_norm[c("x", "label")], mean)$x

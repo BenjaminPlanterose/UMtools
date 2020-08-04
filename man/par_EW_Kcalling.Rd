@@ -4,7 +4,7 @@
 \alias{par_EW_Kcalling}
 \title{Computes bimodality per CpG across samples in a coefficient of variation matrix}
 \usage{
-par_EW_Kcalling(M, U, minPts = 25, reach = seq(0.328, 0.352, 0.004), R = 2)
+par_EW_Kcalling(M, U, minPts = 25, reach = seq(0.328, 0.352, 0.004))
 }
 \arguments{
 \item{CV}{A coefficient of variation matrix (probes as rows, samples as columns)}
