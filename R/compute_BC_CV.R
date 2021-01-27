@@ -14,17 +14,24 @@
 #' GR_to_UM(RedSD, GrnSD, rgSet)
 #' CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 #' compute_BC_CV(CV)
-compute_BC_CV <- function(CV, nCores = NULL)
+compute_BC_CV <- function(CV, nCores = NULL, parallel = F)
 {
-  if(is.null(nCores))
+  if(parallel == T)
   {
-    np <- detectCores(logical = FALSE)
-  }
+    if(is.null(nCores))
+    {
+      np <- detectCores(logical = FALSE)
+    }
 
-  cl <- makeCluster(np)
-  clusterExport(cl, c("bimodality_coefficient"), envir=environment())
-  r <- parSapply(cl = cl, X = 1:nrow(CV), FUN = function(x) bimodality_coefficient(CV[x, ]))
-  stopCluster(cl)
+    cl <- makeCluster(np)
+    clusterExport(cl, c("bimodality_coefficient"), envir=environment())
+    r <- parSapply(cl = cl, X = 1:nrow(CV), FUN = function(x) bimodality_coefficient(CV[x, ]))
+    stopCluster(cl)
+  }
+  else
+  {
+    r = sapply(1:nrow(CV), function(x) bimodality_coefficient(CV[x, ]))
+  }
 
   names(r) <- rownames(CV)
   return(r)

@@ -16,8 +16,7 @@
 #' bGMM(M_U$M, M_U$U, "cg00814218", 3)
 bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter = 2000, method = 'em.EM', EMC = .EMC, transform = TRUE)
 {
-  df = data.frame(x = M[CpG,], y = U[CpG, ])
-
+  m = M[CpG,]; u = U[CpG, ]
   if(transform)
   {
     df = data.frame(x = m/(u + m + 100), y = log2(u + m + 100))
@@ -29,10 +28,17 @@ bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter 
 
   if(K == 1 | K > 4)
   {
+    if(K > 8)
+    {
+      stop("Too many K and not enough colours")
+    }
+    pal = brewer.pal(K, "Dark2")
     df = data.frame(x = m, y = u)
-    plot(df$x, df$y, col = as.factor(class_i), pch = 19, main = CpG, xlab = 'M', ylab = 'U',
+    col = as.factor(class_i); levels(col) = c("Dark green", "Orange", "Purple", "Pink", "Light green", "Yellow", "Brown", "Gray")[1:K]
+
+    plot(df$x, df$y, col = as.character(col), pch = 19, main = CpG, xlab = 'M', ylab = 'U',
          xlim = c(0, max(df$x) + 100), ylim = c(0, max(df$y) + 100))
-    return(as.factor(class_i))
+    return(as.character(col))
   }
   else if(K == 2)
   {

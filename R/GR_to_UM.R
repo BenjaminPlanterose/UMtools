@@ -50,7 +50,7 @@
 #' nBeads <- GR_to_UM(nBeads = nBeads, rgSet = rgSet, what = "NBeads")
 GR_to_UM <- function(Red = NULL, Grn = NULL, rgSet, what = NULL, nBeads = NULL)
 {
-  if(is.null(what)) stop("'what' needs to be equal to 'SD', 'Mean' or 'NBeads'. Please see documentation")
+  if(sum(what %in% c("SD", "Mean", "NBeads")) == 0) stop("'what' needs to be equal to 'SD', 'Mean' or 'NBeads'. Please see documentation")
   locusNames <- minfi::getManifestInfo(rgSet, "locusNames")
   TypeI.Red <- minfi::getProbeInfo(rgSet, type = "I-Red")
   TypeI.Green <- minfi::getProbeInfo(rgSet, type = "I-Green")
@@ -60,8 +60,8 @@ GR_to_UM <- function(Red = NULL, Grn = NULL, rgSet, what = NULL, nBeads = NULL)
   {
     M_and_U <- minfi:::.preprocessRaw(Red = Red, Green = Grn, locusNames = locusNames,
                                       TypeI.Red = TypeI.Red, TypeI.Green = TypeI.Green, TypeII = TypeII)
-    list(M = M_and_U[["M"]],
-         U = M_and_U[["U"]])
+    return(list(M = M_and_U[["M"]],
+                U = M_and_U[["U"]]))
   }
   else if(what == "NBeads")
   {

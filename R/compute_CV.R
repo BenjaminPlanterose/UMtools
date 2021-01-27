@@ -15,9 +15,8 @@
 #' RedSD = assay(rgSet, "RedSD")     # Red SD across beads
 #' GR_to_UM(RedSD, GrnSD, rgSet)
 #' compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
-compute_CV = function(M_SD, U_SD, M, U, alpha1 = 100, alpha2 = 1)
+compute_CV = function(M_SD, U_SD, M, U, alpha = 100)
 {
-  SD_logT = (M_SD + U_SD + alpha1)/(M + U + alpha1)
-  mu_logT = log(M + U) - (SD_logT^2)/2 + alpha2
-  SD_logT/mu_logT
+  R = (M_SD + U_SD + alpha)/(U + M + alpha)
+  1/(log(U + M + alpha)/R - R/2)
 }

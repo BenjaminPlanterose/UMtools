@@ -7,7 +7,7 @@
 #' @return A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
 #' @examples
 #' GR_to_UM(Red, Grn, rgSet)
-density_jitter_plot <- function(mat, CpG, sex = NULL, alpha = 0.5, lambda = 0.05)
+density_jitter_plot <- function(mat, CpG, sex = NULL, alpha = 0.5, lambda = 0.05, main = NULL)
 {
   dens = density(mat[CpG,])
   mu = median(dens$y)
@@ -24,7 +24,7 @@ density_jitter_plot <- function(mat, CpG, sex = NULL, alpha = 0.5, lambda = 0.05
     col = as.factor(sex)
     levels(col) = c("deeppink2", "dodgerblue1")
     col = as.character(col)
-    plot(dens, main = "", xlab = deparse(substitute(mat)))
+    plot(dens, xlab = deparse(substitute(mat)), main = CpG)
     points(x = mat[CpG,], y = rnorm(ncol(mat), mu, sd), col = alpha(col, alpha), pch = 19)
   }
 

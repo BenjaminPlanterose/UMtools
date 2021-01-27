@@ -4,9 +4,9 @@ Version: 0.1
 Authors@R: 
     person(given = "Benjamin",
            family = "Planterose",
-           role = c("aut", "cre"),
+           role = c("author", "developer"),
            email = "b.planterosejimenez@erasmusmc.nl",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0001-8985-9572"))
 Description: Adds extra funtionality for analysing Illumina DNA Methylation arrays at the fluorescence intensity level
 License: MIT
 Encoding: UTF-8
