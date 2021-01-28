@@ -2,26 +2,37 @@
 % Please edit documentation in R/density_jitter_plot.R
 \name{density_jitter_plot}
 \alias{density_jitter_plot}
-\title{Plots density jitter plot}
+\title{Density-jitter plot}
 \usage{
-density_jitter_plot(mat, CpG, sex = NULL, alpha = 0.5, lambda = 0.05)
+density_jitter_plot(
+  mat,
+  CpG,
+  sex = NULL,
+  alpha = 0.5,
+  lambda = 0.05,
+  main = NULL
+)
 }
 \arguments{
-\item{Red}{A red fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{mat}{Matrix of a continous varible such as beta-value, M-value, CVlogT, etc (CpGs as rows and samples as columns)}
 
-\item{Grn}{A green fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{CpG}{Targeted CpG}
 
-\item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
+\item{sex}{vector of sex. First level is expected to be Female (coloured pink). Check levels(sex) to see if that is the case.}
+
+\item{alpha}{Transparency}
+
+\item{lambda}{Regulates the random spread of the points}
+
+\item{main}{Title name}
 }
 \value{
-A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
+Graphics
 }
 \description{
-a
-}
-\details{
-a
+Overlaps a density plot with a jitter plot. A random y-component is added to cause the spread of
+points.
 }
 \examples{
-GR_to_UM(Red, Grn, rgSet)
+density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 }

@@ -2,24 +2,37 @@
 % Please edit documentation in R/Kcall_CpG.R
 \name{Kcall_CpG}
 \alias{Kcall_CpG}
-\title{Transforms number of beads matrix from G/R to U/M}
+\title{K-caller}
 \usage{
-Kcall_CpG(CpG, M, U, minPts = 25, plot = T, reach = seq(0.328, 0.352, 0.004))
+Kcall_CpG(CpG, M, U, plot = T, minPts = 12, eps = 0.035)
 }
 \arguments{
-\item{nBeads}{A matrix containing the number of beads per probe and per sample (probes as rows, samples as columns)}
+\item{CpG}{Targeted CpG}
 
-\item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
+\item{M}{Methylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)}
+
+\item{U}{Unmethylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)}
+
+\item{plot}{Logical. Whether to visualize the K-callers output in the U/M plane or not.}
+
+\item{minPts}{dbscan parameter. Minimum numbers of points in the eps region to consider a core point; help(dbscan, dbscan) for more details.}
+
+\item{eps}{dbscan parameter. Size of the neighbourhood; help(dbscan, dbscan) for more details.}
 }
 \value{
-A matrix containing number of beads per CpG and per sample, \code{nBeads_cg}, (CpGs as rows, samples as columns)
+Numeric, number of predicted clusters in the U/M plane.
 }
 \description{
-a
+Employing preprocessing in combination with the algorithm dbscan, it allows the counting of
+clusters in the U/M plane. If plot = TRUE, a U/M plot is produced for which each cluster in coloured. Outliers,
+samples belonging to no cluster, will be coloured in black (as defined by the dbscan algorithm).
 }
 \details{
-a
+Prior tuning of parameters {eps, minPts} is absolutely necessary and will depend on the sample size of the dataset employed.
+Parameters minPts = 12, eps = 0.05 were optimal in the E-risk cohort (n = 852). Smaller datasets will probably require
+reducing minPts and increasing eps, while larger datasets will probably require increasing minPts and reducing eps.
+For finding optimal parameters, are training set is available at UMtools; see help(training_set) for more details.
 }
 \examples{
-beads_GR_to_UM(nBeads, rgSet)
+Kcall_CpG("cg03398919", M, U)
 }

@@ -1,26 +1,21 @@
 Package: UMtools
 Title: An R-package for analysing Illumina DNA Methylation arrays at the fluorescence intensity level
 Version: 0.1
-Authors@R: 
-    person(given = "Benjamin",
-           family = "Planterose",
-           role = c("author", "developer"),
-           email = "b.planterosejimenez@erasmusmc.nl",
-           comment = c(ORCID = "0000-0001-8985-9572"))
+Authors@R: as.person(c("Benjamin Planterose Jimenez <b.planterosejimenez@erasmusmc.nl> [aut, cre]"))
+Maintainer: Benjamin Planterose Jimenez <b.planterosejimenez@erasmusmc.nl>
 Description: Adds extra funtionality for analysing Illumina DNA Methylation arrays at the fluorescence intensity level
-License: MIT
+License: MIT LICENSE
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 7.1.0
-Imports:
+Depends:
     minfi,
-    data.table,
-    GEOquery,
-    modes,
-    scales,
     EMCluster,
-    dbscan,
     Sushi,
-    parallel,
-    IlluminaHumanMethylation450kanno.ilmn12.hg19,
-    IlluminaHumanMethylation450kmanifest
+    dbscan,
+    parallel
+Imports:
+    data.table,
+    modes,
+    RColorBrewer,
+    scales

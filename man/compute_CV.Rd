@@ -2,9 +2,9 @@
 % Please edit documentation in R/compute_CV.R
 \name{compute_CV}
 \alias{compute_CV}
-\title{Computes coefficient of variation of the log of the total intensity signal}
+\title{CVlogT}
 \usage{
-compute_CV(M_SD, U_SD, M, U, alpha1 = 100, alpha2 = 1)
+compute_CV(M_SD, U_SD, M, U, alpha = 100)
 }
 \arguments{
 \item{M_SD}{Methylated standard deviation intensity matrix (CpGs as rows, samples as columns)}
@@ -19,18 +19,25 @@ compute_CV(M_SD, U_SD, M, U, alpha1 = 100, alpha2 = 1)
 A matrix \code{CV} (CpGs as rows, samples as columns)
 }
 \description{
-a
+Computes coefficient of variation of the log of the total intensity signal
 }
 \details{
-a
+It computes the following:
+\deqn{R = \frac{M_{SD} + U_{SD} + \alpha}{U + M + \alpha}}
+\deqn{CV_{logT}= \frac{1}{\frac{\log(U + M + \alpha)}{R} - R/2}}
+
+For more details, check the reference paper.
 }
 \examples{
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 Grn = assay(rgSet, "Green")       # Green mean across beads
 Red = assay(rgSet, "Red")         # Red mean across beads
-M_U = GR_to_UM(Red, Grn, rgSet)
+M_U = GR_to_UM(Red, Grn, rgSet, "Mean")
 GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
 RedSD = assay(rgSet, "RedSD")     # Red SD across beads
-GR_to_UM(RedSD, GrnSD, rgSet)
+M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet, "SD")
 compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
+}
+\references{
+Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
 }

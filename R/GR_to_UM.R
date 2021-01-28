@@ -1,4 +1,6 @@
-#' GR_to_UM
+#' Green/Red to Unmethylated/Methylated
+#' @export
+#' @import minfi
 #' @description Transforms Green/Red fluorescence signals into Unmethylated/Methylated channels
 #' @details
 #'Illumina DNA methylation microarrays detection rely on three types of probes:

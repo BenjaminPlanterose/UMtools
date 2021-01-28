@@ -2,24 +2,20 @@
 % Please edit documentation in R/export_bigmat.R
 \name{export_bigmat}
 \alias{export_bigmat}
-\title{Transforms number of beads matrix from G/R to U/M}
+\title{Export big matrices}
 \usage{
 export_bigmat(bigmat, filename, nThread = 1)
 }
 \arguments{
-\item{nBeads}{A matrix containing the number of beads per probe and per sample (probes as rows, samples as columns)}
+\item{bigmat}{A matrix (probes as rows, samples as columns)}
 
-\item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
-}
-\value{
-A matrix containing number of beads per CpG and per sample, \code{nBeads_cg}, (CpGs as rows, samples as columns)
+\item{filename}{Name of the output file. The date will be appended automatically.}
+
+\item{nThread}{Number of CPU cores to employ}
 }
 \description{
-a
-}
-\details{
-a
+Exports large matrices with the help of data.table::fwrite
 }
 \examples{
-beads_GR_to_UM(nBeads, rgSet)
+export_bigmat(M, "M.txt")
 }

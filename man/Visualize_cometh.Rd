@@ -2,34 +2,47 @@
 % Please edit documentation in R/Visualize_cometh.R
 \name{Visualize_cometh}
 \alias{Visualize_cometh}
-\title{Computes bimodality per CpG across samples in a coefficient of variation matrix}
+\title{Co-methylation plot}
 \usage{
 Visualize_cometh(
   annotation,
   CpG,
   distance,
-  L_bound = 0,
-  R_bound = 0,
+  L_bound,
+  R_bound,
   beta_mat,
-  probe2flag = NULL,
-  max_y = 11,
-  cgHeightLabel = -1,
-  deltaposHeightLabel = -0.2,
-  chrHeightLabel = -2
+  probe2exclude = NULL,
+  max_y = 11
 )
 }
 \arguments{
-\item{CV}{A coefficient of variation matrix (probes as rows, samples as columns)}
+\item{annotation}{A DNA methylation microarray annotation object. For example, getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)}
+
+\item{CpG}{A CpG identifier (e.g. "cg15771735")}
+
+\item{distance}{A distance that defines the neighbourhood explored for co-methylation (e.g. pos ± distance)}
+
+\item{L_bound}{It allows to easily extend the number of CpGs on the left flank}
+
+\item{R_bound}{It allows to easily extend the number of CpGs on the right flank}
+
+\item{beta_mat}{A numeric matrix (CpGs as rows, samples as columns). We recommend to use M-values, though the function works
+fine with beta-values.}
+
+\item{probe2exclude}{A list of potentially artefactual probes. These will be coloured in purple on the comethylation plot.}
+
+\item{max_y}{It regulates the height of the co-methylation triangle. For more details, see help(plotHic, Sushi)}
 }
 \value{
-A vector of coefficient of bimodality per CpG, \code{BC}
+Graphics + vector. A vector of cg ids visualized in the co-methylation plot is returned.
 }
 \description{
-a
+It visualizes co-methylation of a target probe with its neighbours with a HiC-like plot.
 }
 \details{
-a
+Comethylation squared within the interval [0, 1] is visualized. Distance between probes \eqn{\Delta\delta} is also available on the plot.
 }
 \examples{
-compute_BC_CV(CV)
+res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1000,
+                       L_bound = 3, R_bound = 2, beta_mat = beta_value, max_y = 5)
 }

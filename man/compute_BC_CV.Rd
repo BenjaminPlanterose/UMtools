@@ -2,32 +2,41 @@
 % Please edit documentation in R/compute_BC_CV.R
 \name{compute_BC_CV}
 \alias{compute_BC_CV}
-\title{Computes BC(CV)}
+\title{BC(CV)}
 \usage{
-compute_BC_CV(CV, nCores = NULL)
+compute_BC_CV(CV, parallel = F, nCores = NULL)
 }
 \arguments{
 \item{CV}{A coefficient of variation matrix (probes as rows, samples as columns)}
 
+\item{parallel}{Whether to perform this task employing parallel processing.}
+
 \item{nCores}{Number of cores to employ on this task}
 }
 \value{
-A vector of coefficient of bimodality per CpG, \code{BC}
+A vector of coefficients of bimodality per CpG
 }
 \description{
-Computes bimodality coefficient of the coefficient of variation per CpG across samples
+Computes bimodality coefficient of the CVlogT per CpG across samples
 }
 \details{
-a
+It computes the following per row (per CpG):
+\deqn{BC = \frac{\gamma^{2} +1}{\kappa + \frac{3\cdot(n-1)^{2}}{(n-2)\cdot(n-3)}}}
+Where \eqn{\gamma} is the sample skewness and where \eqn{\kappa} is the sample excess kurtosis.
+
+For more details, check the reference paper.
 }
 \examples{
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 Grn = assay(rgSet, "Green")       # Green mean across beads
 Red = assay(rgSet, "Red")         # Red mean across beads
-M_U = GR_to_UM(Red, Grn, rgSet)
+M_U = GR_to_UM(Red, Grn, rgSet, "Mean")
 GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
 RedSD = assay(rgSet, "RedSD")     # Red SD across beads
-GR_to_UM(RedSD, GrnSD, rgSet)
+M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet, "SD")
 CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 compute_BC_CV(CV)
+}
+\references{
+Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
 }

@@ -3,23 +3,26 @@
 \docType{data}
 \name{CR_probes}
 \alias{CR_probes}
-\title{Cross-reactive probes}
+\title{List of in silico-predicted cross-reactive probes in the Illumina Infinium HumanMethylation450 Beadchip microarray}
 \format{
-An object of class
-}
-\source{
-a
+An object of class vector
 }
 \usage{
 data(CR_probes)
 }
 \description{
-Cross-reactive probes
+A compilation of 41,993 cross-reactive (CR) probes obtained by combining the CR-lists
+from Price \emph{et al} (\strong{2013}) and Chen \emph{et al} (\strong{2013}). For the list of Price \emph{et al},
+we included both autosomal and allosomal hits (A_YES or XY_YES).
 }
 \examples{
 data(CR_probes)
 }
 \references{
-a
+[1] Chen \emph{et al} (\strong{2013}). Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.
+\emph{Epigenetics}. 2013 Feb;8(2):203-9. doi: 10.4161/epi.23470. Epub 2013 Jan 11.
+
+[2] Price \emph{et al} (\strong{2013}). Additional annotation enhances potential for biologically-relevant analysis of the Illumina Infinium HumanMethylation450 BeadChip array
+\emph{Epigenetics Chromatin}. 2013 Mar 3;6(1):4. doi: 10.1186/1756-8935-6-4.
 }
 \keyword{datasets}

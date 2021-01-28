@@ -1,11 +1,13 @@
-#' Transforms number of beads matrix from G/R to U/M
-#' @description a
-#' @details a
-#' @param nBeads A matrix containing the number of beads per probe and per sample (probes as rows, samples as columns)
-#' @param rgSet An rgSet object imported by minfi (see minfi::read.metharray.exp for details)
-#' @return A matrix containing number of beads per CpG and per sample, \code{nBeads_cg}, (CpGs as rows, samples as columns)
+#' Export big matrices
+#' @export
+#' @import data.table
+#' @description Exports large matrices with the help of data.table::fwrite
+#' @param bigmat A matrix (probes as rows, samples as columns)
+#' @param filename Name of the output file. The date will be appended automatically.
+#' @param nThread Number of CPU cores to employ
+#' @return NULL
 #' @examples
-#' beads_GR_to_UM(nBeads, rgSet)
+#' export_bigmat(M, "M.txt")
 export_bigmat <- function(bigmat, filename, nThread = 1)
 {
   fwrite(data.table(bigmat, keep.rownames = T), paste(Sys.Date(), filename, sep = '_'), quote = F,

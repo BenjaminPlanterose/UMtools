@@ -1,22 +1,57 @@
 #### tmp
 setwd("/home/ben/Documents/Git/")
-install("UMtools")
+library(devtools); library(roxygen2); install("UMtools")
+
+data(annot_450K)
+data(annot_EPIC)
+data(classification_CpG_SNP_450K)
+data(classification_CpG_SNP_EPIC)
+data(CR_probes)
+data(triallelic_CpG_SNP_450K)
+data(triallelic_CpG_SNP_EPIC)
+data(training_set)
+
+
+
+library(UMtools)
+help(annot_450K)
+help(annot_EPIC)
+help(classification_CpG_SNP_450K)
+help(classification_CpG_SNP_EPIC)
+help(CR_probes)
+help(triallelic_CpG_SNP_450K)
+help(triallelic_CpG_SNP_EPIC)
+help(training_set)
+help(bGMM)
+help(compute_BC_CV)
 help(compute_CV)
+help(GR_to_UM)
 help(density_jitter_plot)
 help(export_bigmat)
-help(GR_to_UM)
 help(import_bigmat)
 help(Kcall_CpG)
-help(k_per_CpG)
 help(par_EW_Kcalling)
+help(train_k_caller)
 help(UM_plot)
 help(Visualize_cometh)
+
+setwd("/home/ben/Documents/Git/UMtools/")
+document()
+
+
+remove.packages("UMtools")
+####
+
+####
+library(devtools)
+library(roxygen2)
+setwd("/home/ben/Documents/Git/UMtools/")
+document()
 ####
 
 
 
-
-## 1) Installation
+## 1) Installation    SOME ARE MISSING!!!!!
 
 # From Bioconductor
 if (!requireNamespace("BiocManager", quietly=TRUE))
@@ -25,10 +60,13 @@ BiocManager::install('minfi')
 BiocManager::install('GEOquery')
 
 # From CRAN
-install.packages(modes)
-install.packages(scales)
-install.packages(EMCluster)
-install.packages(dbscan)
+
+devtools::install_version("modes", "0.7.0")
+#install.packages("modes")
+install.packages("scales")
+install.packages("EMCluster")
+install.packages("dbscan")
+install.packages("RColorBrewer")
 
 # From Github
 library("devtools")
@@ -54,13 +92,13 @@ names(example)
 # [1] "fileSize"  "versionNumber" "nFields"   "fields"  "nSNPsRead" "Quants" "MidBlock"
 # [8] "RedGreen"  "Barcode"       "ChipType"  "RunInfo" "Unknowns"
 
-head(example$RunInfo)
+head(example$RunInfo, 3)
 #             RunTime          BlockType
 # [1,] "1/12/2016 2:37:05 AM" "Decoding"
 # [2,] "4/8/2016 6:03:57 PM"  "Scan"
 # [3,] "4/8/2016 6:03:57 PM"  "Register"
 
-head(example$Quants)
+head(example$Quants, 3)
 #           Mean  SD  NBeads
 # 10600313  284  137     13
 # 10600322 9405 1363     14
@@ -68,18 +106,29 @@ head(example$Quants)
 
 
 # 4) Extracting fluorescence intensity matrices
-library(minfi)
-library(IlluminaHumanMethylation450kanno.ilmn12.hg19) ############## CHECK DEPENDENCIES!!!!
-library(IlluminaHumanMethylation450kmanifest)
-library(GEOquery)
-library(scales)
-library(modes)
-library(EMCluster)
-library(dbscan)
-library(Sushi)
+# library(minfi)
+# library(data.table)
+# library(modes)
+# library(EMCluster)
+# library(dbscan)
+# library(Sushi)
+# library(parallel)
+# library(RColorBrewer)
+# library(scales)
+
+
+# TO LOAD
 library(UMtools)
-library(data.table)
-library(RColorBrewer)
+library(GEOquery)
+# 450K
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+library(IlluminaHumanMethylation450kmanifest)
+# EPIC
+# library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+# library(IlluminaHumanMethylationEPICmanifest)
+
+
+
 
 setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
@@ -149,10 +198,10 @@ rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 
 setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/") # Change this route to fit your system
 export_bigmat(M_U$M, "M.txt", nThread = 4)
-M = import_bigmat("2021-01-27_M.txt", nThread = 4)
+M = import_bigmat("2021-01-28_M.txt", nThread = 4)
 
 ## 6) Quickly importing phenotypes with GEOquery
-
+library(GEOquery)
 setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
 pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
 pheno <- pheno_object[[1]]
@@ -165,6 +214,8 @@ IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
 pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are in the same order as in IDATs
 
 ## 7) UMtools in action
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+annotation <- getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 
 # Y-chromosome targeting probe
 density_jitter_plot(beta_value, "cg00050873", pheno$sex)
@@ -237,7 +288,8 @@ Kcall_CpG(sample(training_set$k_4, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
 
 # Lower maf variants are wrongly annotated in this dataset. Sample size not big enough.
 train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07) # 0.7948261
-
+# Error in train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07) :
+#   object 'k_1' not found
 
 ### Comethylation plots
 

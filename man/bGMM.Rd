@@ -24,24 +24,24 @@ bGMM(
 
 \item{CpG}{A CpG identifier (e.g. "cg15771735")}
 
-\item{K}{Targetted number of clusters}
+\item{K}{Targeted number of clusters}
 
 \item{...}{Control functions for EMCluster}
 }
 \value{
-A vector of classes in the same order as the columns
+A vector of classes in the same order as the columns of U and M.
 }
 \description{
 Fits a Gaussian Mixture Model (bGMM) with K components on the Unmethylated/Methylated plane
 }
 \details{
-It employs the function init.EM from the R-package EMCluster that fits a GMM employing the expectation
-maximization algorithm. Run help(initEM) for more information.
+It employs the function init.EM from the R-package EMCluster that fits a Gaussian Mixture Model employing the expectation-maximization
+algorithm on the U/M plane. Run help(initEM) for more information on the EMCluster control functions.
 }
 \examples{
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 Grn = assay(rgSet, "Green")       # Green mean across beads
 Red = assay(rgSet, "Red")         # Red mean across beads
 M_U = GR_to_UM(Red, Grn, rgSet)
-bGMM(M_U$M, M_U$U, "cg00814218", 3)
+bGMM(M = M_U$M, U = M_U$U, CpG = "cg00814218", K = 3)
 }

@@ -1,12 +1,18 @@
-#' Plots density jitter plot
-#' @description a
-#' @details a
-#' @param Red A red fluorescence intensity matrix (probes as rows, samples as columns)
-#' @param Grn A green fluorescence intensity matrix (probes as rows, samples as columns)
-#' @param rgSet An rgSet object imported by minfi (see minfi::read.metharray.exp for details)
-#' @return A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
+#' Density-jitter plot
+#' @export
+#' @import modes
+#' @description Overlaps a density plot with a jitter plot. A random y-component is added to cause the spread of
+#' points.
+#' @param mat Matrix of a continous varible such as beta-value, M-value, CVlogT, etc (CpGs as rows and samples as columns)
+#' @param CpG Targeted CpG
+#' @param sex vector of sex. First level is expected to be Female (coloured pink). Check levels(sex) to see if that is the case.
+#' @param alpha Transparency
+#' @param lambda Regulates the random spread of the points
+#' @param main Title name
+
+#' @return Graphics
 #' @examples
-#' GR_to_UM(Red, Grn, rgSet)
+#' density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 density_jitter_plot <- function(mat, CpG, sex = NULL, alpha = 0.5, lambda = 0.05, main = NULL)
 {
   dens = density(mat[CpG,])

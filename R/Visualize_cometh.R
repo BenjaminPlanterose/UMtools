@@ -1,15 +1,24 @@
-#' Computes bimodality per CpG across samples in a coefficient of variation matrix
-#' @description a
-#' @details a
-#' @param CV A coefficient of variation matrix (probes as rows, samples as columns)
-#' @return A vector of coefficient of bimodality per CpG, \code{BC}
+#' Co-methylation plot
+#' @export
+#' @import Sushi
+#' @description It visualizes co-methylation of a target probe with its neighbours with a HiC-like plot.
+#' @details Comethylation squared within the interval [0, 1] is visualized. Distance between probes \eqn{\Delta\delta} is also available on the plot.
+#' @param annotation A DNA methylation microarray annotation object. For example, getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+#' @param CpG A CpG identifier (e.g. "cg15771735")
+#' @param distance A distance that defines the neighbourhood explored for co-methylation (e.g. pos ± distance)
+#' @param L_bound It allows to easily extend the number of CpGs on the left flank
+#' @param R_bound It allows to easily extend the number of CpGs on the right flank
+#' @param beta_mat A numeric matrix (CpGs as rows, samples as columns). We recommend to use M-values, though the function works
+#' fine with beta-values.
+#' @param probe2exclude A list of potentially artefactual probes. These will be coloured in purple on the comethylation plot.
+#' @param max_y It regulates the height of the co-methylation triangle. For more details, see help(plotHic, Sushi)
+#' @return Graphics + vector. A vector of cg ids visualized in the co-methylation plot is returned.
 #' @examples
-#' compute_BC_CV(CV)
+#' res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1000,
+#'                        L_bound = 3, R_bound = 2, beta_mat = beta_value, max_y = 5)
+
 Visualize_cometh = function(annotation, CpG, distance, L_bound, R_bound, beta_mat, probe2exclude = NULL, max_y = 11)
 {
-  # CpG = 'cg01026744'
-  # R_bound = 4; L_bound = 4
-  # distance = 50
   annotation = annotation[order(annotation$chr, annotation$pos),]
   sub_annot = annotation[CpG,]
   tmp = annotation[annotation$chr == sub_annot$chr,]
@@ -78,9 +87,9 @@ Visualize_cometh = function(annotation, CpG, distance, L_bound, R_bound, beta_ma
   text(x = end, y = -0.2, labels = expression(paste(Delta, delta)), xpd = T)
   text(x = (start + end)/2, y = -2.1, labels = sub_annot$chr, xpd = T)
 
-  cor_vec = sapply(1:nrow(beta_mat), function(x) cor(beta_mat[x, seq(1, ncol(beta_mat), 2)], beta_mat[x, seq(2, ncol(beta_mat), 2)],
-                                                     method = "pearson")^2)
-  names(cor_vec) = rownames(beta_mat)
+  # cor_vec = sapply(1:nrow(beta_mat), function(x) cor(beta_mat[x, seq(1, ncol(beta_mat), 2)], beta_mat[x, seq(2, ncol(beta_mat), 2)],
+  #                                                    method = "pearson")^2)
+  # names(cor_vec) = rownames(beta_mat)
 
   return(rownames(beta_mat))
 }

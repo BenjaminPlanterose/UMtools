@@ -1,19 +1,23 @@
 #' Bivariate Gaussian Mixture Model
+#' @export
+#' @import EMCluster
+#' @import scales
+#' @import RColorBrewer
 #' @description Fits a Gaussian Mixture Model (bGMM) with K components on the Unmethylated/Methylated plane
-#' @details It employs the function init.EM from the R-package EMCluster that fits a GMM employing the expectation
-#' maximization algorithm. Run help(initEM) for more information.
+#' @details It employs the function init.EM from the R-package EMCluster that fits a Gaussian Mixture Model employing the expectation-maximization
+#' algorithm on the U/M plane. Run help(initEM) for more information on the EMCluster control functions.
 #' @param M A matrix containing the methylated intensities (CpGs as rows, samples as columns)
 #' @param U A matrix containing the unmethylated intensities (CpGs as rows, samples as columns)
 #' @param CpG A CpG identifier (e.g. "cg15771735")
-#' @param K Targetted number of clusters
+#' @param K Targeted number of clusters
 #' @param ... Control functions for EMCluster
-#' @return A vector of classes in the same order as the columns
+#' @return A vector of classes in the same order as the columns of U and M.
 #' @examples
 #' rgSet = read.metharray.exp(getwd(), extended = TRUE)
 #' Grn = assay(rgSet, "Green")       # Green mean across beads
 #' Red = assay(rgSet, "Red")         # Red mean across beads
 #' M_U = GR_to_UM(Red, Grn, rgSet)
-#' bGMM(M_U$M, M_U$U, "cg00814218", 3)
+#' bGMM(M = M_U$M, U = M_U$U, CpG = "cg00814218", K = 3)
 bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter = 2000, method = 'em.EM', EMC = .EMC, transform = TRUE)
 {
   m = M[CpG,]; u = U[CpG, ]

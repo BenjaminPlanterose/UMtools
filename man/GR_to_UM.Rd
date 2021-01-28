@@ -2,7 +2,7 @@
 % Please edit documentation in R/GR_to_UM.R
 \name{GR_to_UM}
 \alias{GR_to_UM}
-\title{GR_to_UM}
+\title{Green/Red to Unmethylated/Methylated}
 \usage{
 GR_to_UM(Red = NULL, Grn = NULL, rgSet, what = NULL, nBeads = NULL)
 }

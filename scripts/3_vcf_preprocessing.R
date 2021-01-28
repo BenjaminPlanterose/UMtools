@@ -20,7 +20,11 @@ extract.type <- function(metadata)
 setwd("/home/ben/Documents/Git/UMtools_dat/dat_450K/vcf/raw/")
 setwd("/home/ben/Documents/Git/UMtools_dat/dat_EPIC/vcf/raw/")
 
+#setwd("/media/ben/DATA/Ben/3_genetic_artefacts/annotation/UMtools_dat/dat_450K/vcf/raw/")
+
 CpG_SNP = fread("CpG_sites.vcf"); dim(CpG_SNP) # 61733    12
+head(CpG_SNP)
+
 metadata = as.vector(CpG_SNP$V8); MAF = extract.maf(metadata)
 CpG_SNP = CpG_SNP[MAF > 0.01,] # Filter > 1 % variants
 dim(CpG_SNP) # 17842    12
@@ -28,6 +32,8 @@ metadata = as.vector(CpG_SNP$V8); type = extract.type(metadata)
 table(type)
 # DIV   SNV
 # 1118 16724
+
+
 
 indel = CpG_SNP[type == "DIV",]; dim(CpG_SNP) # 16724   12
 CpG_SNP = CpG_SNP[type == "SNV",]; dim(indel) # 1118  12

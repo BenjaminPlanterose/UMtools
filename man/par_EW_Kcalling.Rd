@@ -2,22 +2,32 @@
 % Please edit documentation in R/par_EW_Kcalling.R
 \name{par_EW_Kcalling}
 \alias{par_EW_Kcalling}
-\title{Computes bimodality per CpG across samples in a coefficient of variation matrix}
+\title{Epigenome-wide K-calling}
 \usage{
-par_EW_Kcalling(M, U, minPts = 25, reach = seq(0.328, 0.352, 0.004))
+par_EW_Kcalling(M, U, minPts = 12, eps = 0.035, nThread = NULL)
 }
 \arguments{
-\item{CV}{A coefficient of variation matrix (probes as rows, samples as columns)}
+\item{M}{Methylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)}
+
+\item{U}{Unmethylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)}
+
+\item{minPts}{dbscan parameter. Minimum numbers of points in the eps region to consider a core point; help(dbscan, dbscan) for more details.}
+
+\item{eps}{dbscan parameter. Size of the neighbourhood; help(dbscan, dbscan) for more details.}
+
+\item{nThread}{Number of CPU cores to employ}
 }
 \value{
-A vector of coefficient of bimodality per CpG, \code{BC}
+Vector. Predicted number of clusters for each CpG.
 }
 \description{
-a
-}
-\details{
-a
+Same as Kcall_CpG but it performs K-calling on all the CpGs (rows) of a given matrix.
+Also, it allows parallel processing. If nThread is not specified, it will automatically detect
+how many clusters are available in the machine and will use N-1 cores.
 }
 \examples{
-compute_BC_CV(CV)
+annotation <- getAnnotation(rgSet)
+chrY = rownames(annotation)[annotation$chr == "chrY"]
+K_vec = par_EW_Kcalling(M[chrY,], U[chrY,])
+
 }

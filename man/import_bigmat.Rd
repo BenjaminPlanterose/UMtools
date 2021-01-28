@@ -2,26 +2,21 @@
 % Please edit documentation in R/import_bigmat.R
 \name{import_bigmat}
 \alias{import_bigmat}
-\title{Transforms G/R fluorescence signals into U/M}
+\title{Import big matrices}
 \usage{
 import_bigmat(filename, nThread = 1)
 }
 \arguments{
-\item{Red}{A red fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{filename}{Name of the file to import}
 
-\item{Grn}{A green fluorescence intensity matrix (probes as rows, samples as columns)}
-
-\item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
+\item{nThread}{Number of CPU cores to employ}
 }
 \value{
-A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
+Matrix
 }
 \description{
-a
-}
-\details{
-a
+Imports large matrices with the help of data.table::fread
 }
 \examples{
-GR_to_UM(Red, Grn, rgSet)
+M = import_bigmat("2021-01-27_M.txt")
 }

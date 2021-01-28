@@ -1,6 +1,12 @@
-#' Computes coefficient of variation of the log of the total intensity signal
-#' @description a
-#' @details a
+#' CVlogT
+#' @export
+#' @description Computes coefficient of variation of the log of the total intensity signal
+#' @details It computes the following:
+#' \deqn{R = \frac{M_{SD} + U_{SD} + \alpha}{U + M + \alpha}}
+#' \deqn{CV_{logT}= \frac{1}{\frac{\log(U + M + \alpha)}{R} - R/2}}
+#'
+#' For more details, check the reference paper.
+#' @references Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
 #' @param M_SD Methylated standard deviation intensity matrix (CpGs as rows, samples as columns)
 #' @param U_SD Unmethylated fluorescence standard deviation intensity matrix (CpGs as rows, samples as columns)
 #' @param M Methylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)
@@ -10,10 +16,10 @@
 #' rgSet = read.metharray.exp(getwd(), extended = TRUE)
 #' Grn = assay(rgSet, "Green")       # Green mean across beads
 #' Red = assay(rgSet, "Red")         # Red mean across beads
-#' M_U = GR_to_UM(Red, Grn, rgSet)
+#' M_U = GR_to_UM(Red, Grn, rgSet, "Mean")
 #' GrnSD = assay(rgSet, "GreenSD")   # Green SD across beads
 #' RedSD = assay(rgSet, "RedSD")     # Red SD across beads
-#' GR_to_UM(RedSD, GrnSD, rgSet)
+#' M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet, "SD")
 #' compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 compute_CV = function(M_SD, U_SD, M, U, alpha = 100)
 {

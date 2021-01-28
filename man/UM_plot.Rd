@@ -2,26 +2,34 @@
 % Please edit documentation in R/UM_plot.R
 \name{UM_plot}
 \alias{UM_plot}
-\title{Transforms G/R fluorescence signals into U/M}
+\title{U/M plot}
 \usage{
 UM_plot(M, U, CpG, sex = NULL, xlim = NULL, ylim = NULL, alpha = 0.5)
 }
 \arguments{
-\item{Red}{A red fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{M}{Methylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)}
 
-\item{Grn}{A green fluorescence intensity matrix (probes as rows, samples as columns)}
+\item{U}{Unmethylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)}
 
-\item{rgSet}{An rgSet object imported by minfi (see minfi::read.metharray.exp for details)}
+\item{CpG}{A CpG identifier (e.g. "cg15771735")}
+
+\item{sex}{vector of sex. First level is expected to be Female (coloured pink). Check levels(sex) to see if that is the case.}
+
+\item{xlim}{x-axis limit}
+
+\item{ylim}{y-axis limit}
+
+\item{alpha}{transparency}
 }
 \value{
-A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
+Graphics
 }
 \description{
-a
+Scatter plot of fluorescence intensities: unmethylated (U) fluorescence against methylated (M) fluorescence.
 }
 \details{
-a
+More information on what it is referred as U/M fluorescence is available at help(GR_to_UM).
 }
 \examples{
-GR_to_UM(Red, Grn, rgSet)
+UM_plot(M = M, U = U, CpG = "cg00050873", sex = pheno$sex)
 }

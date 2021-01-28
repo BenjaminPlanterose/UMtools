@@ -1,12 +1,18 @@
-#' Transforms G/R fluorescence signals into U/M
-#' @description a
-#' @details a
-#' @param Red A red fluorescence intensity matrix (probes as rows, samples as columns)
-#' @param Grn A green fluorescence intensity matrix (probes as rows, samples as columns)
-#' @param rgSet An rgSet object imported by minfi (see minfi::read.metharray.exp for details)
-#' @return A list including matrices \code{M} and \code{U} (CpGs as rows, samples as columns)
+#' U/M plot
+#' @export
+#' @import scales
+#' @description Scatter plot of fluorescence intensities: unmethylated (U) fluorescence against methylated (M) fluorescence.
+#' @details More information on what it is referred as U/M fluorescence is available at help(GR_to_UM).
+#' @param M Methylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)
+#' @param U Unmethylated fluorescence mean intensity matrix (CpGs as rows, samples as columns)
+#' @param CpG A CpG identifier (e.g. "cg15771735")
+#' @param sex vector of sex. First level is expected to be Female (coloured pink). Check levels(sex) to see if that is the case.
+#' @param xlim x-axis limit
+#' @param ylim y-axis limit
+#' @param alpha transparency
+#' @return Graphics
 #' @examples
-#' GR_to_UM(Red, Grn, rgSet)
+#' UM_plot(M = M, U = U, CpG = "cg00050873", sex = pheno$sex)
 UM_plot <- function(M, U, CpG, sex = NULL, xlim = NULL, ylim = NULL, alpha = 0.5)
 {
   df = data.frame(x = M[CpG,], y = U[CpG,])
