@@ -505,7 +505,7 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 
 Cluster formation in the UM plane cannot be tested epigenome-wide by bGMM since we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm.
 
-On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that the scale of the plot has been transformed to reduce the ellipticity of clusters in the U/M plane.
+On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that that K-calling is performed in a transformed scale to reduce the ellipticity of clusters in the U/M plane.
 
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, eps = 0.1)
@@ -536,7 +536,7 @@ Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 ![Alt text](img/img14.png?raw=true "cg27024127")
 
 
-On the other hand, function *par_EW_Kcalling* is the parallel-computing version for epigenome-wide K-calling. Running on all chrY probes (n = 416), we observe the following:
+On the other hand, function *par_EW_Kcalling* is the parallel-computing version for epigenome-wide K-calling. Running it on all chrY probes (n = 416), we observe the following:
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
@@ -556,12 +556,10 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 ```
 ![Alt text](img/img15.png?raw=true "cg02494853")
 
-
-As a word of notice, 
-
-TRAIN
-Training annotated with dataset of 426 EUR MZ twin pairs. Training set may not be correctly annotated for other ancestries and other sample sizes.
-Lower maf variants are wrongly annotated in this dataset. Sample size not big enough.
+As a word of notice, parameters *eps* and *minPts* depend on the sample size and hence require dataset-specific tuning. To enable the training of these parameters,
+we manually compiled a training set that includes probes forming from 1 to 4 clusters in the U/M plane on a dataset of 426 MZ twin pairs of the E-risk cohort (British, EUR ancestry). 
+However, please note that the number of clusters observed may be different in other datasets depending on ancestry and sample size and hence, the training set needs to be 
+manually curated to employ on a given dataset. In this dataset, we have a much smaller sample size and a different ancestry so we expect differences in the number of expected clusters for probes in the training set.
 
 ```r
 data("training_set")
