@@ -559,7 +559,7 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 As a word of notice, parameters *eps* and *minPts* depend on the sample size and hence require dataset-specific tuning. To enable the training of these parameters,
 we manually compiled a training set that includes probes forming from 1 to 4 clusters in the U/M plane on a dataset of 426 MZ twin pairs of the E-risk cohort (British, EUR ancestry). 
 However, please note that the number of clusters observed may be different in other datasets depending on ancestry and sample size and hence, the training set needs to be 
-manually curated on each dataset. In this specific dataset, we have a much smaller sample size and a different ancestry so we expect storng differences.
+manually curated. In this specific dataset, we have a much smaller sample size and a different ancestry so we expect strong differences.
 We can confirm our suspicions by: 
 
 ```r
@@ -627,7 +627,17 @@ annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198
 ![Alt text](img/img21.png?raw=true "cg11495604")
 
 
-Only with the exception of fields of genetic variants such as in HLA loci
+
+
+A final word of notice, two assumptions are implicit under this approach:
+
+  * Probes are available at a distance close enough to display co-methylation. This is not always the case
+  
+  * Nearby probes are not affected by genetic artefacts.
+
+Asumption 2 is great violated at HLA loci, known to be hotspots for genetic variability. As a result, nearby CpGs atefactually affected by underlying genetic variants display
+artefactual comethylation due to linkage disequilibrium between underlying variant. As an example:
+
 ```r
 res = Visualize_cometh(annotation = annotation, CpG = 'cg00211215', distance = 200,
                        L_bound = 3, R_bound = 0, beta_mat = beta_value, max_y = 5)
