@@ -4,14 +4,14 @@
 \alias{compute_BC_CV}
 \title{BC(CV)}
 \usage{
-compute_BC_CV(CV, parallel = F, nCores = NULL)
+compute_BC_CV(CV, parallel = F, nThread = NULL)
 }
 \arguments{
 \item{CV}{A coefficient of variation matrix (probes as rows, samples as columns)}
 
 \item{parallel}{Whether to perform this task employing parallel processing.}
 
-\item{nCores}{Number of cores to employ on this task}
+\item{nThread}{Number of CPU cores to employ on this task}
 }
 \value{
 A vector of coefficients of bimodality per CpG

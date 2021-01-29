@@ -1,7 +1,11 @@
-#### tmp
+#### install-uninstall
 setwd("/home/ben/Documents/Git/")
 library(devtools); library(roxygen2); install("UMtools")
+remove.packages("UMtools")
+####
 
+
+#### test datasets
 data(annot_450K)
 data(annot_EPIC)
 data(classification_CpG_SNP_450K)
@@ -10,10 +14,9 @@ data(CR_probes)
 data(triallelic_CpG_SNP_450K)
 data(triallelic_CpG_SNP_EPIC)
 data(training_set)
+####
 
-
-
-library(UMtools)
+#### check documentation
 help(annot_450K)
 help(annot_EPIC)
 help(classification_CpG_SNP_450K)
@@ -34,57 +37,45 @@ help(par_EW_Kcalling)
 help(train_k_caller)
 help(UM_plot)
 help(Visualize_cometh)
+####
 
+#### Update documentation
+library(roxygen2); library(devtools)
 setwd("/home/ben/Documents/Git/UMtools/")
 document()
-
-
-remove.packages("UMtools")
 ####
 
-####
+
+########################################## 1. Installation ##########################################
+
+# To install R-packages from github, you need devtools:
 library(devtools)
-library(roxygen2)
-setwd("/home/ben/Documents/Git/UMtools/")
-document()
-####
 
-
-
-## 1) Installation    SOME ARE MISSING!!!!!
-
-# From Bioconductor
-if (!requireNamespace("BiocManager", quietly=TRUE))
-  install.packages("BiocManager")
+# Dependencies from Bioconductor
+if (!requireNamespace("BiocManager", quietly=TRUE)) install.packages("BiocManager")
 BiocManager::install('minfi')
 BiocManager::install('GEOquery')
-
-# From CRAN
-
+# Dependencies from CRAN
 devtools::install_version("modes", "0.7.0")
-#install.packages("modes")
 install.packages("scales")
 install.packages("EMCluster")
 install.packages("dbscan")
 install.packages("RColorBrewer")
-
-# From Github
-library("devtools")
+# Dependencies from Github
 install_github("dphansti/Sushi")
 install_github("BenjaminPlanterose/UMtools")
 
-# 2) Downloading example
+########################################## 2. Downloading example ##########################################
 
 # Run in bash
-
 # wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar --wait=10 --limit-rate=50K
 # tar -xvf GSE104812_RAW.tar
 # find . -type f ! -name '*.idat.gz' -delete
 # gunzip *.gz
 
+########################################## 3. Peaking into an IDAT ##########################################
 
-# 3) Peaking into an IDAT
-
+# Illuminaio is a dependency of minfi
 library(illuminaio)
 setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
 example = illuminaio::readIDAT("GSM2808239_sample1_Grn.idat")
@@ -104,32 +95,9 @@ head(example$Quants, 3)
 # 10600322 9405 1363     14
 # 10600328 3538  439     11
 
+########################################## 4. Extracting fluorescence intensity matrices ##########################################
 
-# 4) Extracting fluorescence intensity matrices
-# library(minfi)
-# library(data.table)
-# library(modes)
-# library(EMCluster)
-# library(dbscan)
-# library(Sushi)
-# library(parallel)
-# library(RColorBrewer)
-# library(scales)
-
-
-# TO LOAD
 library(UMtools)
-library(GEOquery)
-# 450K
-library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-library(IlluminaHumanMethylation450kmanifest)
-# EPIC
-# library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
-# library(IlluminaHumanMethylationEPICmanifest)
-
-
-
-
 setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
@@ -138,10 +106,8 @@ TypeII <- getProbeInfo(rgSet, type = "II")
 ctrls <- getProbeInfo(rgSet, type = "Control")
 SnpI <- getProbeInfo(rgSet, type = "SnpI")
 SnpII <- getProbeInfo(rgSet, type = "SnpII")
-
 known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, TypeI.Red$AddressA,
                  TypeI.Red$AddressB, TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA)
-
 length(known_probes) # 621926
 all = rownames(rgSet); length(known_probes) # 622399
 orphan = all[!(all %in% known_probes)]; length(orphan) # 473
@@ -158,7 +124,12 @@ head(TypeII[, 1:2], n = 2)
 # 1  cg00035864    31729416
 # 2  cg00061679    28780415
 
-annotation <- getAnnotation(rgSet)
+# Getting the probe annotation
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19) # 450K
+annotation <- getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+# library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19) # 850K
+# annotation <- getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+
 colnames(annotation)
 # [1]  "chr"                      "pos"                      "strand"                   "Name"
 # [5]  "AddressA"                 "AddressB"                 "ProbeSeqA"                "ProbeSeqB"
@@ -186,6 +157,8 @@ M_U_sd$M[1:3, 1:3]; M_U_sd$U[1:3, 1:3]
 nBeads_cg[1:3, 1:3]
 
 
+########################################## 5. Compute beta- and M-values ##########################################
+
 offset = 100 # For numerical stability at low fluorescence intensities
 beta_value = M_U$M/(M_U$M + M_U$U + offset)
 
@@ -194,13 +167,15 @@ M_value = log2((M_U$M + offset)/(M_U$U + offset))
 
 rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 
-# 5) Quickly importing/exporting large matrices with data.table
+########################################## 6. Quickly importing/exporting large matrices with data.table ##########################################
 
 setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/") # Change this route to fit your system
 export_bigmat(M_U$M, "M.txt", nThread = 4)
+list.files()
 M = import_bigmat("2021-01-28_M.txt", nThread = 4)
 
-## 6) Quickly importing phenotypes with GEOquery
+########################################## 7. Quickly importing GEO phenotypes with GEOquery ##########################################
+
 library(GEOquery)
 setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
 pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
@@ -213,7 +188,9 @@ pheno = data.frame(GEO_ID = as.character(rownames(pheno)),
 IDAT_IDs = sapply(strsplit(colnames(rgSet), split = "_"),function(x) x[1])
 pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are in the same order as in IDATs
 
-## 7) UMtools in action
+########################################## 8. UMtools in action ##########################################
+
+# 450K annotation
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 annotation <- getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 
@@ -235,7 +212,6 @@ UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02973417", sex = pheno$sex)
 annotation["cg02973417", c("chr", "pos")] # chrX  153220895
 
 
-
 ### Bivariate Gaussian Mixture Models (bGMMs)
 set.seed(2); res = bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
 set.seed(3); res = bGMM(M_U$M, M_U$U, "cg00814218", K = 3)
@@ -254,7 +230,6 @@ BC_CV["cg00050873"]
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 
 
-
 ### K-calling
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, eps = 0.1)
@@ -262,7 +237,14 @@ Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 
 chrY = rownames(annotation)[annotation$chr == "chrY"]
-K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, eps = 0.1)
+
+
+
+start_time <- Sys.time()
+K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, eps = 0.1, nThread = 10)
+end_time <- Sys.time()
+end_time - start_time # Consumes 6 GB, 17.46199 secs
+
 table(K_vec)
 # K_vec
 #  1   2
@@ -275,9 +257,10 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 
 # If aiming to employ epigenome-wide, it is very important to adjust {minPts, eps} to the
 # sample size of the data employed.
-setwd("/home/ben/Documents/Git/UMtools/data/")
-load("training_set.Rdata")
-# data("training_set") # This should work
+
+# setwd("/home/ben/Documents/Git/UMtools/data/")
+# load("training_set.Rdata")
+data("training_set")
 
 # Training annotated with dataset of 426 EUR MZ twin pairs. Training set may not be correctly annotated
 # for other ancestries and other sample sizes.

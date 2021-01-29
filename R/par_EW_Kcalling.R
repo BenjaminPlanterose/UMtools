@@ -31,16 +31,12 @@ par_EW_Kcalling <- function(M, U, minPts = 12, eps = 0.035, nThread = NULL)
 
   if(is.null(nThread))
   {
-    nThread <- detectCores(logical = FALSE) - 1
+    nThread <- parallel::detectCores(logical = FALSE) - 1
   }
 
-  print(dim(M)); print(dim(U))
-  nThread <- detectCores(logical = FALSE)
-  cl <- makeCluster(nThread)
-  clusterExport(cl, c("k_per_CpG", "dbscan", "eps", "minPts"), envir=environment())
-  r <- parSapply(cl = cl, X = 1:nrow(M), FUN = function(X) k_per_CpG(data.frame(x = M[X,], y = U[X,]),
-                                                                     minPts, eps)) # process per row
+  print(dim(M)); print(dim(U)); message(paste("Using", nThread, "cores"))
+  r <- parallel::mclapply(1:nrow(M), function(X) k_per_CpG(data.frame(x = M[X,], y = U[X,]), minPts, eps),
+                          mc.cores = nThread)
   names(r) <- rownames(M)
-  stopCluster(cl)
-  return(r)
+  return(unlist(r))
 }

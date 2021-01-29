@@ -24,25 +24,42 @@ For issues arising while running UMtools, either [report an issue](https://githu
     
 ## Installation 
 
+To install an R-package from Github, the library devtools is required:
+
+```r
+install.packages("devtools")
+library(devtools)
+```
+
+To install UMtools dependencies:
+
 ```r
 # From Bioconductor
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 BiocManager::install('minfi')
-BiocManager::install('GEOquery')
 
 # From CRAN
 install.packages(parallel)
-install.packages(modes)
 install.packages(scales)
 install.packages(EMCluster)
 install.packages(dbscan)
+install.packages(RColorBrewer)
 
 # From Github
-library("devtools")
-install_github("dphansti/Sushi")
-install_github("BenjaminPlanterose/UMtools")
+devtools::install_version("modes", "0.7.0")
+devtools::install_github("dphansti/Sushi")
+devtools::install_github("BenjaminPlanterose/UMtools")
 ```
+
+To install other R-packages required for this tutorial:
+
+```r
+BiocManager::install('GEOquery')
+BiocManager::install('IlluminaHumanMethylation450kanno.ilmn12.hg19')
+BiocManager::install('IlluminaHumanMethylation450kmanifest')
+```
+
 
 # About the tutorial
     
@@ -64,6 +81,7 @@ gc()
 
 All R commands are idented on the Wiki. But if prefered, you may find them all in one script at the following link
 [tutorial.R](https://github.com/BenjaminPlanterose/UMtools/tree/master/tutorial/tutorial.R)
+
 
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
@@ -163,11 +181,11 @@ gunzip *.gz
 ```
 Or if prefered, it is also possible to go to the following url and manually download the TAR (of IDAT) via http https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
 
-Back to R, to peak into an IDAT file, in this case of the green channel of random sample, we ran:
+Back to R, to peak into an IDAT file, in this case of the green channel of random sample, we can run:
 
 ```r
 library(illuminaio)
-setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
+#setwd("~/foo/") # Change this route to fit your system
 example = illuminaio::readIDAT("GSM2808239_sample1_Grn.idat")
 ```
 
@@ -208,20 +226,11 @@ The Bioconductor-based **minfi** library is a huge R-package that has set the st
 
 Given that UMtools depends on some basic processing operations already established in the minfi library, we have compiled in this tutorial some handy functions, many of which unexported or not included on minfi's documentation. 
 
-We firstly load all required libraries:
+We firstly load UMtools:
 
 ```r
-library(minfi)
-library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-library(IlluminaHumanMethylation450kmanifest)
-library(GEOquery)
-library(scales)
-library(modes)
-library(EMCluster)
-library(dbscan)
-library(Sushi)
 library(UMtools)
-library(parallel)
+
 ```
 
 To read all IDAT files in a directory, we use the *minfi::read.metharray.exp* function. If additionally, we intend
@@ -229,7 +238,7 @@ to read additional information such as the number of beads or the standard devia
 intensity channels, we will need to set the *extended* argument to TRUE.
 
 ```r
-setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
+setwd("~/foo/") # Change this route to fit your system
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 ```
 

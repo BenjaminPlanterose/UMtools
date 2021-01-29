@@ -11,7 +11,7 @@
 #' @references Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
 #' @param CV A coefficient of variation matrix (probes as rows, samples as columns)
 #' @param parallel Whether to perform this task employing parallel processing.
-#' @param nCores Number of cores to employ on this task
+#' @param nThread Number of CPU cores to employ on this task
 #' @return A vector of coefficients of bimodality per CpG
 #' @examples
 #' rgSet = read.metharray.exp(getwd(), extended = TRUE)
@@ -23,16 +23,16 @@
 #' M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet, "SD")
 #' CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 #' compute_BC_CV(CV)
-compute_BC_CV <- function(CV, parallel = F, nCores = NULL)
+compute_BC_CV <- function(CV, parallel = F, nThread = NULL)
 {
   if(parallel == T)
   {
-    if(is.null(nCores))
+    if(is.null(nThread))
     {
-      np <- detectCores(logical = FALSE)
+      nThread <- detectCores(logical = FALSE)
     }
 
-    cl <- makeCluster(np)
+    cl <- makeCluster(nThread)
     clusterExport(cl, c("bimodality_coefficient"), envir=environment())
     r <- parSapply(cl = cl, X = 1:nrow(CV), FUN = function(x) bimodality_coefficient(CV[x, ]))
     stopCluster(cl)
