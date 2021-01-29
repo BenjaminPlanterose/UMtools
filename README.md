@@ -355,18 +355,19 @@ rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is prefarable to read once and export/import the rest of the times. As R-base cannot cope with large files, we made use of data.table ultra-fast and RAM-efficient routines to build up wrappers to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
 
 ```r
-setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/") # Change this route to fit your system
+setwd("~/foo/") # Change this route to fit your system
 export_bigmat(M_U$M, "M.txt", nThread = 4)
-M = import_bigmat("2020-06-19_M.txt", nThread = 4)
+list.files() # "2021-01-28_M.txt"
+M = import_bigmat("2021-01-28_M.txt", nThread = 4)
 ```
 
-## Quickly importing phenotypes with GEOquery
+## Importing phenotypes with GEOquery
 
 In addition, GEOquery allows to parse phenotypes from the GEO database in minimum number of lines of code:
 
 ```r
 library(GEOquery)
-setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
+setwd('~/foo/')
 pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
 pheno <- pheno_object[[1]]
 pheno <- phenoData(pheno)
@@ -463,7 +464,7 @@ For probes suffering from a genetic variant that causes probe failure, a duality
 CV is a measure of noise-to-signal ratio and can be simply computed by *compute_cv*. CV is highly bimodal when a probe fails due to a genetic artefact.
 
 ```r
-CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
+CV = compute_CV(M_SD = M_U_sd$M, U_SD = M_U_sd$U, M = M_U$M, U = M_U_sd$U, alpha = 100)
 density_jitter_plot(CV, "cg00050873", pheno$sex)
 ```
 ![Alt text](img/img10.png?raw=true "cg00050873 jitter")
@@ -476,10 +477,10 @@ Bimodality can be quantified by a *bimodality coefficient*:
 BC(CV) can be computed for all CpGs with *compute_BC_CV*, rendering a good measure for ambivalency in probe failure.
 
 ```r
-BC_CV = compute_BC_CV(CV)
+BC_CV = compute_BC_CV(CV = CV)
 BC_CV["cg00050873"]
 # cg00050873 
-#   1.128741  
+#   1.128555  
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 
@@ -491,21 +492,21 @@ Cluster formation in the UM plane cannot be tested epigenome-wide by bGMM since 
 On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that the scale of the plot has been transformed to reduce the ellipticity of clusters in the U/M plane.
 
 ```r
-Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
+Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 # [1] 1
 ```
 ![Alt text](img/img11.png?raw=true "cg15771735")
 
 
 ```r
-Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
+Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 # [1] 2
 ```
 ![Alt text](img/img12.png?raw=true "cg03398919")
 
 
 ```r
-Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
+Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 # [1] 3
 ```
 ![Alt text](img/img13.png?raw=true "cg00814218")
@@ -513,7 +514,7 @@ Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 
 
 ```r
-Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
+Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 # [1] 4
 ```
 ![Alt text](img/img14.png?raw=true "cg27024127")
@@ -523,11 +524,11 @@ On the other hand, function *par_EW_Kcalling* is the parallel-computing version 
 
 ```r
 chrY = rownames(annotation)[annotation$chr == "chrY"]
-K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, reach = seq(0.99, 1.01, 0.01), R = 2)
+K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, eps = 0.1, nThread = 10)
 table(K_vec)
 # K_vec
 # 1   2
-# 38 378
+# 35 381
 ```
 
 It was expected that given that probe targeting ChrY fail for females, that two clusters are always formed. The observed K = 1 probes consist of cross-reactive probes and a minor component of K-calling mistakes. For example, this supposedly Y-Chr CpG clearly displays a strong methylated signal in females (thus, cross-reactive):
@@ -538,6 +539,21 @@ UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02494853", sex = pheno$sex)
 annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 ```
 ![Alt text](img/img15.png?raw=true "cg02494853")
+
+
+
+TRAIN
+Training annotated with dataset of 426 EUR MZ twin pairs. Training set may not be correctly annotated for other ancestries and other sample sizes.
+Lower maf variants are wrongly annotated in this dataset. Sample size not big enough.
+
+```r
+data("training_set")
+Kcall_CpG(sample(training_set$k_1, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
+Kcall_CpG(sample(training_set$k_2, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
+Kcall_CpG(sample(training_set$k_3, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
+Kcall_CpG(sample(training_set$k_4, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
+train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07) # 0.7948261
+```
 
 
 ### Comethylation plots
@@ -556,7 +572,7 @@ annotation["cg14911689", c("chr", "pos", "UCSC_RefGene_Name")] # chr12    739980
 However, we observe neighbour CpGs form similar shapes:
 
 ```r
-annotation <- annotation[order(annotation$chr, annotation$pos),]
+annotation <- annotation[order(annotation$chr, annotation$pos),] # sort annotation by chromosome and position
 pos <- which(rownames(annotation) == "cg14911689")
 UM_plot(M = M_U$M, U = M_U$U, CpG = rownames(annotation)[pos-1], sex = NULL)
 UM_plot(M = M_U$M, U = M_U$U, CpG = rownames(annotation)[pos+1], sex = NULL)
@@ -570,9 +586,7 @@ Moreover, we can examine if neighbouring CpGs methylation status is correlated v
 
 ```r
 res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1000,
-                       L_bound = 3, R_bound = 2, beta_mat = beta_value,
-                       cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
-                       max_y = 5)
+                       L_bound = 3, R_bound = 2, beta_mat = beta_value, max_y = 5)
 ```
 
 ![Alt text](img/img19.png?raw=true "cg01201512")
@@ -583,9 +597,7 @@ This is not the case for a genetic artefact such as:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg11495604", sex = NULL)
 res = Visualize_cometh(annotation = annotation, CpG = 'cg11495604', distance = 1000,
-                       L_bound = 0, R_bound = 2, beta_mat = beta_value,
-                       cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
-                       max_y = 5)
+                       L_bound = 0, R_bound = 2, beta_mat = beta_value, max_y = 5)
 annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198 KCNQ2;KCNQ2;KCNQ2;KCNQ2
 ```
 ![Alt text](img/img20.png?raw=true "cg11495604")
@@ -596,9 +608,7 @@ annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198
 Only with the exception of fields of genetic variants such as in HLA loci
 ```r
 res = Visualize_cometh(annotation = annotation, CpG = 'cg00211215', distance = 200,
-                       L_bound = 3, R_bound = 0, beta_mat = beta_value,
-                       cgHeightLabel = -1, deltaposHeightLabel = -0.4, chrHeightLabel = -2,
-                       max_y = 5)
+                       L_bound = 3, R_bound = 0, beta_mat = beta_value, max_y = 5)
 annotation["cg00211215", c("chr", "pos", "UCSC_RefGene_Name")] # chr6  32552246   HLA-DRB1
 ```
 ![Alt text](img/img22.png?raw=true "cg11495604")
