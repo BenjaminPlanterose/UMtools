@@ -635,7 +635,7 @@ A final word of notice, two assumptions are implicit under this approach:
   
   * Nearby probes are not affected by genetic artefacts.
 
-Asumption 2 is great violated at HLA loci, known to be hotspots for genetic variability. As a result, nearby CpGs atefactually affected by underlying genetic variants display
+Asumption 2 is greatly violated at HLA loci, known to be hotspots for genetic variability. As a result, nearby CpGs atefactually affected by underlying genetic variants display
 artefactual comethylation due to linkage disequilibrium between underlying variant. As an example:
 
 ```r
