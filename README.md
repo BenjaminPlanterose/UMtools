@@ -8,12 +8,14 @@
 
 ## Why UMtools?
 
-Several R-packages have been developed to analyze data from Illumina's DNA methylation microarray platforms. In pursuit for the appealing of a wide range of end users, these however tend to sacrifice modularisation for simplicity: standarised pipelines are conceived to be deployed as one rather than being composed by repurposable modules. 
-
-As a result, the average user performs rudimentary examination of the raw data dissuaded by the scarcity of available tools targetting the beginning of the analysis. Very often, these tools already exist but are embedded within established pipelines, are unexported to the main R-package and lack written documentation. 
-
-For all the above, UMtools was developed as modular R-package that focuses on the low-level analysis of Illumina DNA methylation microarray data. Instead of the methylation ratio or beta-value, UMtools analyses fluorescence intensity means and standard deviation across beads, stored at the very heart of the IDAT file, Illumina's propietary format.
-
+A great range of R-packages have already been developed to analyze data from Illumina's DNA methylation microarray platforms such as minfi, ENmix, ChAMP, EWAStools, etc.
+Where does UMtools fit in this ecosystem? UMtools focuses on the low-level analysis of Illumina DNA methylation microarray data, at the level of fluorescence intensities. 
+We believe that we can harvest much more from the IDAT file, Illumina's propietary format. For example, the standard deviation across beads has rarely been mentioned in the 
+literature and could be used in applications studying to the technical noise of DNA methylation microarray platforms.
+We have additionally included new tools such as CVlogT, BC(CVlogT), K-caller, Comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
+(B. Planterose *et al* (**2021**)) but that could well be employed for other applications.
+Also, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
+R-package) and wrapped it to ease working at this level.
 
 ## Tested on
 
@@ -63,7 +65,9 @@ BiocManager::install('IlluminaHumanMethylation450kmanifest')
 
 # About the tutorial
     
-With this tutorial we aim to increase the technical accesibility of the technology. We cover topics for which information is hard to find such as the Beadchip technology, control probes, the content of the IDAT file, as well as how to extract all of this information from an example dataset at GEO. In addition, we provide a summary of all the tools available at UMtools. 
+With this tutorial we aim to increase the technical accesibility of the technology. We cover topics for which information is hard to find such as the Beadchip technology, 
+control probes, the content of the IDAT file, as well as how to extract all of this information from an example dataset at GEO. In addition, we provide a summary of all 
+the tools available at UMtools. 
 
 However, make sure to have at least 8GB of RAM available. Working with fluorescence intensities involves large matrices, meaning heavy RAM usage. To avoid any issues, we recommend to always monitor resources via htop if working from a Linux machine:
 
