@@ -486,7 +486,7 @@ density_jitter_plot(CV, "cg00050873", pheno$sex)
 ![Alt text](img/img10.png?raw=true "cg00050873 jitter")
 
 
-Bimodality can be quantified by a *bimodality coefficient* as a function of the sample skewness (<img src="https://render.githubusercontent.com/render/math?math=\gamma">) and kurtosis ($\kappa$):
+Bimodality can be quantified by a *bimodality coefficient* as a function of the sample skewness (<img src="https://render.githubusercontent.com/render/math?math=\gamma">) and kurtosis (<img src="https://render.githubusercontent.com/render/math?math=\kappa">):
 
 <img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
 
