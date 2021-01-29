@@ -602,7 +602,6 @@ res = Visualize_cometh(annotation = annotation, CpG = 'cg11495604', distance = 1
 annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198 KCNQ2;KCNQ2;KCNQ2;KCNQ2
 ```
 ![Alt text](img/img20.png?raw=true "cg11495604")
-
 ![Alt text](img/img21.png?raw=true "cg11495604")
 
 
@@ -617,7 +616,7 @@ annotation["cg00211215", c("chr", "pos", "UCSC_RefGene_Name")] # chr6  32552246 
 
 ### Annotations included in UMtools
 
-UMtools also contains some helpfuk annotations: 
+UMtools also contains some helpful annotations: 
 
 ```r
 data(annot_450K) # Genetic variants associated to Illumina Infinium HumanMethylation450 Beadchip probes
