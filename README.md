@@ -285,7 +285,10 @@ head(TypeII[, 1:3], n = 2)
 For a biological annotation of the CpGs targetted by type-I and II probes, we can execute:
 
 ```r
-annotation <- getAnnotation(rgSet)
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19) # 450K
+annotation <- getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+# library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19) # 850K
+# annotation <- getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 colnames(annotation)
 # [1]  "chr"                      "pos"                      "strand"                   "Name"                    
 # [5]  "AddressA"                 "AddressB"                 "ProbeSeqA"                "ProbeSeqB"               
@@ -309,10 +312,12 @@ nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 ```
 
 To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which in turn employs the unexported function *minfi:::.preprocessRaw*), returning a list that contains methylated and unmethylated fluorescence intensities.
+To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, we select the smallest number of beads between addressA and addressB to represent a CpG targetted by type-I probe pairs.
 
 ```r
-M_U = GR_to_UM(Red, Grn, rgSet)
-M_U_sd = GR_to_UM(RedSD, GrnSD, rgSet)
+M_U = GR_to_UM(Red = Red, Grn = Grn, rgSet = rgSet, what = "Mean")
+M_U_sd = GR_to_UM(Red = RedSD, Grn = GrnSD, rgSet = rgSet, what = "SD")
+nBeads_cg = GR_to_UM(nBeads = nBeads, rgSet = rgSet, what = "NBeads")
 ```
 
 Internally, it assigns the methylated and unmethylated intensity values as followed:
@@ -323,12 +328,6 @@ Internally, it assigns the methylated and unmethylated intensity values as follo
 | Type-I Green  | Green (addressB)  | Green (addressA)  |
 | Type-I Red    | Red (addressB)    |  Red (addressA)   |
 
-
-To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, we select the smallest number of beads between addressA and addressB to represent a CpG targetted by type-I probe pairs.
-
-```r
-nBeads_cg = beads_GR_to_UM(nBeads, rgSet)
-```
 
 Finally, to obtain a matrix of raw beta-values, one can simply compute:
 
@@ -366,6 +365,7 @@ M = import_bigmat("2020-06-19_M.txt", nThread = 4)
 In addition, GEOquery allows to parse phenotypes from the GEO database in minimum number of lines of code:
 
 ```r
+library(GEOquery)
 setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
 pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
 pheno <- pheno_object[[1]]
@@ -387,14 +387,14 @@ Moving from univariate methylation value to the bivariate the U/M plane not only
 density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
-![Alt text](img/jitter_betaval.png?raw=true "cg00026186 U/M plot")
+![Alt text](img/img1.png?raw=true "cg00026186 U/M plot")
 
 Unlike on the methylation scale, failed samples cluster at the origin of the UM-plane:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
-![Alt text](img/UM.png?raw=true "cg00050873 U/M plot")
+![Alt text](img/img2.png?raw=true "cg00050873 U/M plot")
 
 UM plots wide variety of phenomena such as X-inactivation: due to the double gene dosage of Chromosome-X in females, one of the copies is randomly inactivated via large-scale targetted methylation. As a result, females are 50 % methylated while males are 0 or 100 % methylated:
 
@@ -402,7 +402,7 @@ UM plots wide variety of phenomena such as X-inactivation: due to the double gen
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
 annotation["cg00026186", c("chr", "pos")] # chrX  48367230
 ```
-![Alt text](img/x_inact.png?raw=true "cg00026186 U/M plot")
+![Alt text](img/img3.png?raw=true "cg00026186 U/M plot")
 
 
 However, some loci escape X-inactivation and as a result, are unmethylated in both males and females. However, given the double-copy of X-chromosomes in females, the unmethylated intensity is higher on average than in males
@@ -410,64 +410,17 @@ However, some loci escape X-inactivation and as a result, are unmethylated in bo
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg04927982", sex = pheno$sex)
 annotation["cg04927982", c("chr", "pos")] # chrX  53254653
 ```
-![Alt text](img/escape.png?raw=true "cg04927982 U/M plot")
+![Alt text](img/img4.png?raw=true "cg04927982 U/M plot")
 
 
-Some probes are cross-reactive, e.g. they hybridize at several loci in the genome. Although supposedly targetting an autosomal locus, this probe looks exactly like X-inactivation due to its cross-reactivity towards the chromosome X:
+Also, some loci are hypermethylated in for X-chromosomes:
 ```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg20926353", sex = pheno$sex)
-annotation["cg20926353", c("chr", "pos")] # chr9  84303358
+UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02973417", sex = pheno$sex)
+annotation["cg02973417", c("chr", "pos")] # chrX  153220895
 ```
-![Alt text](img/CR.png?raw=true "cg20926353 U/M plot")
+![Alt text](img/img5.png?raw=true "cg02973417 U/M plot")
 
 
-In this case, the targetted locus escapes X-inactivation but on top, the probe is cross-reactive to the Y-chromosome (males get an extra M-signal from the Y-chromosome):
-```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg26738106", sex = pheno$sex)
-annotation["cg26738106", c("chr", "pos")] # chrX   3265038
-```
-![Alt text](img/CR_2.png?raw=true "cg26738106 U/M plot")
-
-
-Genetic artefacts such as SNPs or indels can cause probe failure when homozygous. In this case, a SNP causes a 3'-overhang, making it impossible to develop the single-base extension step:
-```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg03398919", sex = NULL)
-annotation["cg03398919", c("chr", "pos")] # chr2 173118470
-```
-![Alt text](img/PF.png?raw=true "cg03398919 U/M plot")
-
-
-But other times, the SNP is confused for the U/M epiallele. When the biological context has the opposite state (SNP = U in a methylated region or viceversa), it gives rise to 3 clusters (homozygous and heterozygous for both allele). Here, SNP = U:
-```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00814218", sex = NULL)
-annotation["cg00814218", c("chr", "pos")] # chr14  37445440
-```
-![Alt text](img/SNP_U.png?raw=true "cg00814218 U/M plot")
-
-
-And here, SNP = M:
-```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg17004290", sex = NULL)
-annotation["cg17004290", c("chr", "pos")] # chr4 108853384
-```
-![Alt text](img/SNP_M.png?raw=true "cg17004290 U/M plot")
-
-
-Sometimes, two SNPs interact giving rise to a mixture between probe failure and SNP confused for one of the epialleles:
-```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg27024127", sex = NULL)
-annotation["cg27024127", c("chr", "pos")] # chr8  27522576
-```
-![Alt text](img/2SNP.png?raw=true "cg27024127 U/M plot")
-
-
-
-Finally, we show a probe affected by a SNP on top of being cross-reactive:
-```r
-UM_plot(M = M_U$M, U = M_U$U, CpG = "cg23186955", sex = pheno$sex)
-annotation["cg23186955", c("chr", "pos")] # chr3  16420793
-```
-![Alt text](img/CR_SNP.png?raw=true "cg23186955 U/M plot")
 
 
 
@@ -478,25 +431,25 @@ As we have seen in the previous section, the formation of clusters in the UM pla
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
 ```
-![Alt text](img/bGMM2.png?raw=true "cg03398919 bGMM")
+![Alt text](img/img6.png?raw=true "cg03398919 bGMM")
 
 
 ```r
 set.seed(3); bGMM(M_U$M, M_U$U, "cg00814218", K = 3)
 ```
-![Alt text](img/bGMM3.png?raw=true "cg00814218 bGMM")
+![Alt text](img/img7.png?raw=true "cg00814218 bGMM")
 
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg27024127", K = 4)
 ```
-![Alt text](img/bGMM4.png?raw=true "cg27024127 bGMM")
+![Alt text](img/img8.png?raw=true "cg27024127 bGMM")
 
 
 ```r
 set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 ```
-![Alt text](img/bGMM5.png?raw=true "cg23186955 bGMM")
+![Alt text](img/img9.png?raw=true "cg23186955 bGMM")
 
 
 
@@ -513,7 +466,7 @@ CV is a measure of noise-to-signal ratio and can be simply computed by *compute_
 CV = compute_CV(M_U_sd$M, M_U_sd$U, M_U$M, M_U_sd$U)
 density_jitter_plot(CV, "cg00050873", pheno$sex)
 ```
-![Alt text](img/jitter_CV.png?raw=true "cg00050873 jitter")
+![Alt text](img/img10.png?raw=true "cg00050873 jitter")
 
 
 Bimodality can be quantified by a *bimodality coefficient*:
@@ -541,21 +494,21 @@ On the one hand, the function *Kcall_CpG* provides of a visual output. Please no
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 1
 ```
-![Alt text](img/K_call1.png?raw=true "cg15771735")
+![Alt text](img/img11.png?raw=true "cg15771735")
 
 
 ```r
 Kcall_CpG("cg03398919", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 2
 ```
-![Alt text](img/K_call2.png?raw=true "cg03398919")
+![Alt text](img/img12.png?raw=true "cg03398919")
 
 
 ```r
 Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 3
 ```
-![Alt text](img/K_call3.png?raw=true "cg00814218")
+![Alt text](img/img13.png?raw=true "cg00814218")
 
 
 
@@ -563,7 +516,7 @@ Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, reach = seq(0.99, 1.01, 0.01))
 # [1] 4
 ```
-![Alt text](img/K_call4.png?raw=true "cg27024127")
+![Alt text](img/img14.png?raw=true "cg27024127")
 
 
 On the other hand, function *par_EW_Kcalling* is the parallel-computing version for epigenome-wide K-calling. Running on all chrY probes (n = 416), we observe the following:
@@ -584,7 +537,7 @@ names(which(K_vec == 1))[2] # "cg02494853"
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02494853", sex = pheno$sex)
 annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 ```
-![Alt text](img/y_cr.png?raw=true "cg02494853")
+![Alt text](img/img15.png?raw=true "cg02494853")
 
 
 ### Comethylation plots
@@ -597,7 +550,7 @@ This CpG is forming three clusters:
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg14911689", sex = NULL)
 annotation["cg14911689", c("chr", "pos", "UCSC_RefGene_Name")] # chr12    739980    NINJ2
 ```
-![Alt text](img/mQTL.png?raw=true "cg14911689")
+![Alt text](img/img16.png?raw=true "cg14911689")
 
 
 However, we observe neighbour CpGs form similar shapes:
@@ -609,8 +562,8 @@ UM_plot(M = M_U$M, U = M_U$U, CpG = rownames(annotation)[pos-1], sex = NULL)
 UM_plot(M = M_U$M, U = M_U$U, CpG = rownames(annotation)[pos+1], sex = NULL)
 ```
 
-![Alt text](img/mQTL2.png?raw=true "cg26371957")
-![Alt text](img/mQTL3.png?raw=true "cg26654770")
+![Alt text](img/img17.png?raw=true "cg26371957")
+![Alt text](img/img18.png?raw=true "cg26654770")
 
 
 Moreover, we can examine if neighbouring CpGs methylation status is correlated via:
@@ -622,7 +575,7 @@ res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1
                        max_y = 5)
 ```
 
-![Alt text](img/cometh_mQTL.png?raw=true "cg01201512")
+![Alt text](img/img19.png?raw=true "cg01201512")
 
 
 This is not the case for a genetic artefact such as:
@@ -635,9 +588,9 @@ res = Visualize_cometh(annotation = annotation, CpG = 'cg11495604', distance = 1
                        max_y = 5)
 annotation["cg11495604", c("chr", "pos", "UCSC_RefGene_Name")] # chr20  62053198 KCNQ2;KCNQ2;KCNQ2;KCNQ2
 ```
-![Alt text](img/PF2.png?raw=true "cg11495604")
+![Alt text](img/img20.png?raw=true "cg11495604")
 
-![Alt text](img/cometh_mQTL2.png?raw=true "cg11495604")
+![Alt text](img/img21.png?raw=true "cg11495604")
 
 
 Only with the exception of fields of genetic variants such as in HLA loci
@@ -648,14 +601,14 @@ res = Visualize_cometh(annotation = annotation, CpG = 'cg00211215', distance = 2
                        max_y = 5)
 annotation["cg00211215", c("chr", "pos", "UCSC_RefGene_Name")] # chr6  32552246   HLA-DRB1
 ```
-![Alt text](img/cometh_mQTL3.png?raw=true "cg11495604")
+![Alt text](img/img22.png?raw=true "cg11495604")
 
 
 
 
 ### References
 
-B. Planterose *et al* (**2018**). Universal epigenetic dissimilarity: DNA methylation variation that is equivalent between monozygotic co-twins and unrelated individuals.
+B. Planterose *et al* (**2021**). Revisiting genetic artefacts on DNA methylation microarrays: implications for meQTL mapping. *Genome research*
 
 
 
