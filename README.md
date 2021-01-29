@@ -15,7 +15,7 @@ We believe that we can harvest much more from the IDAT file, Illumina's propieta
 literature and could be used in applications studying to the technical noise of DNA methylation microarray platforms.
 
 We have additionally included new tools such as CVlogT, BC(CVlogT), K-caller or comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
-(B. Planterose *et al* (**2021**)) but that could well be employed for other applications.
+(B. Planterose *et al* **2021**) but that could well be employed for other applications.
 
 Finally, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
 R-package) and wrapped it to ease working at this level.
@@ -92,11 +92,11 @@ All R commands are idented on the Wiki. But if prefered, you may find them all i
 
 ## A word on the Beadchip microarray technology and the probes on the 450K
 
-The Beadchip technology is the basis of Illumina DNA methylation microarrays. On the one hand, it is a probe-based approach where hundreds of thousands of copies of a specific 50 nucleotide-long probes lie on the surface of silica beads. On the other hand, The microarray itself consists of a silica substrate with uniformly interspaced microwells.
+Initially developed for genotyping arrays, a BeadChip microarray consists of a silicon substrate with regularly interspaced micro-wells. Silicon micro-beads randomly self-assemble in the wells. 
+Each bead is covered by hundreds of thousands of copies of the same 50-nucleotide long probe. 
+
 During the manufacture of the chip, a total of 622,399 types of beads, each bearing a different probe, are pooled together and deposited on
-the microarray. Subsequently, beads automatically self-assemble on the microarray's microwell. As a result, both
-the order and the number copies for each bead type are random.
-To assign the correspondance between microwells and bead types, decoding is required. This is done during manufacture via consecutive hybridizations with other sets of probes that target the address, a 22 nucleotide-long oligonucleotide handle that links the bead to the probe (stored as a DMAP file).
+the microarray. Subsequently, beads automatically self-assemble on the microarray's microwell.
 
 Detection of DNA methylation is done by coupling single-nucleotide variant detection with bisulfite conversion, by which unmethylated cytosines are converted to uraciles while leaving methylated cytosines unchanged. Two approaches are simultaneously performed on the microarray:
 
@@ -104,7 +104,7 @@ Detection of DNA methylation is done by coupling single-nucleotide variant detec
   
   * Infinium type-I: Relies on two probes, each targetting either the unmethylated converted CpG or the methylated unconverted CpG. Single base extension occurs one nucleotide before or after the CpG site at positions 0 or +3 (depending on which strand is targetted). Thus, the addition of the nucleotide is independent of the methylation status, and hence, both probes are registed in the same fluorescence channel but at two different beadtypes.
   
-The addition of type-I probes together with the inclusion of control bead types that are not informative for CpG methylation explains why 485,512 cytosines are targetted by 622,399 different bead types. We have compiled a thorough count all the probes included in the 450K:
+The addition of type-I probes together with the inclusion of control bead types that are not informative for CpG methylation explains why 485,512 cytosines are targeted by 622,399 different bead types. We have compiled a thorough count all the probes included in the 450K:
 
 * Type I (n = 135,476 x 2) - two bead types per cytosine.
 
@@ -150,11 +150,15 @@ In total, that makes:
     473 + 25*2 + 40 + 848 + 46,289 * 2 + 89,187 * 2 + 350,036 = 622,399 probes
 
 
+Also, during the manufacture, beads are pooled in equal ratio and then deposited on the array. 
+As a result, the exact number of copies of each beadType is not controlled (varies from chip to chip). To assign the correspondence between microwells and bead types, decoding is required. 
+This is done during manufacture via consecutive hybridizations with other sets of probes that target the address, a 23 nucleotide-long oligonucleotide handle (address) that links the bead 
+to the probe in the form of a DMAP file (Nakabayashi 2017).
+
+
 ## The 450K protocol
 
-As a summary of the previous section, probes (50 nt) are tethered on the surface of each bead type (622,399 in total), connected via the address (23 nt). A random number for each bead type self-assemble on random micro-wells of the microarray. Decoding is performed to assign a bead type to each microwell, via consecutive hybridizations. Concerning CpG methylation detection, for the Infinium type-I assay, two bead types are required while for Infinium type-II assay, only a single bead type is required.
-
-With a working microarray with known mapping between bead types and positions (in the shape of a DMAP file), the preparation of samples goes as follows:
+The protocol to process samples goes as follows:
 
   * Genomic DNA extraction.
   
@@ -166,11 +170,11 @@ With a working microarray with known mapping between bead types and positions (i
   
   * Hybridization to the microarray + Washing.
   
-  * Infinium assay - incubation with a DNA polymerase and dideoxynucleotides-triphosphate (ddNTPs): ddATP and ddTTP labelled with biotin, ddCTP and ddGTP labelled with dinitrophenol (DNP). Upon single-based extension, elongation cannot continue due to the dideoxy nature of the incorporated nucleotide. Staining is carried out by incubating with fluorophore-labelled acceptors: Red-fluorescing Cy5-labelled anti-DNP (targetting ddA/T) and Green-fluorescing Cy3-labelled streptavidin (targetting ddC/G).
+  * Infinium assay - incubation with a DNA polymerase and dideoxynucleotides-triphosphate (ddNTPs): ddATP and ddTTP labelled with biotin, ddCTP and ddGTP labelled with dinitrophenol (DNP). Upon single-based extension (SBE), elongation cannot continue due to the dideoxy nature of the incorporated nucleotide. Staining is carried out by incubating with fluorophore-labelled acceptors: Red-fluorescing Cy5-labelled anti-DNP (targetting ddA/T) and Green-fluorescing Cy3-labelled streptavidin (targeting ddC/G).
   
-  * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan.
+  * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan confocal laser microarray scanner.
   
-  * Fluorescence intensity information is stored as two IDAT files, one per fluorescence channel.
+  * Fluorescence intensity information is stored as two IDAT files, one per fluorescence channel. The .IDAT (Intensity Data) extension is Illumina's proprietary format for storage of microarray scanners' raw fluorescence output and is encrypted and non-human readable. After decrypting the two output files, it is possible to extract the number of beads per beadType (nBeads), the mean and SD in fluorescence intensity of each beadType across bead replicates in the green and the red channel (G, R, G_SD and R_SD) plus technical metadata
 
 
 ## Peaking into an IDAT file
