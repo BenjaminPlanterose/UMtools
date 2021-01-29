@@ -490,13 +490,13 @@ Bimodality can be quantified by a *bimodality coefficient* as a function of the 
 
 <img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
 
-BC(CV) can be computed for all CpGs with *compute_BC_CV*, rendering a good measure for ambivalency in probe failure.
+BC(CV) is defined in the range [0,1] and BC(CV)> 5/9 can be used as evidence for multimodality.
 
 ```r
 BC_CV = compute_BC_CV(CV = CV)
 BC_CV["cg00050873"]
 # cg00050873 
-#   1.128555  
+#   1.128555  # higher than 1, because sample estimators are used to computed kurtosis and skewness and the sample size employed is small.
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 
