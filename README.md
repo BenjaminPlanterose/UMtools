@@ -14,9 +14,10 @@ Where does UMtools fit in this ecosystem? UMtools focuses on the low-level analy
 We believe that we can harvest much more from the IDAT file, Illumina's propietary format. For example, the standard deviation across beads has rarely been mentioned in the 
 literature and could be used in applications studying to the technical noise of DNA methylation microarray platforms.
 
-We have additionally included new tools such as CVlogT, BC(CVlogT), K-caller, Comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
+We have additionally included new tools such as CVlogT, BC(CVlogT), K-caller or comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
 (B. Planterose *et al* (**2021**)) but that could well be employed for other applications.
-Also, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
+
+Finally, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
 R-package) and wrapped it to ease working at this level.
 
 ## Tested on
