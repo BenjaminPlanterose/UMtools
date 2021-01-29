@@ -361,7 +361,7 @@ rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 
 ## Quickly importing/exporting large matrices with data.table
 
-During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is prefarable to read once and export/import the rest of the times. As R-base cannot cope with large files, we made use of data.table ultra-fast and RAM-efficient routines to build up wrappers to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
+During the analysis of DNA methylation microarray data, to avoid having to read IDATs again and again, it is preferable to read once and export/import the rest of the times. To reduce waiting time, we wrapped data.table;s ultra-fast and RAM-efficient routines to conveniently import and export epigenomics matrices (import_bigmat and export_bigmat, respectively):
 
 ```r
 setwd("~/foo/") # Change this route to fit your system
