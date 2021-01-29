@@ -172,9 +172,8 @@ The protocol to process samples goes as follows:
   
   * Infinium assay - incubation with a DNA polymerase and dideoxynucleotides-triphosphate (ddNTPs): ddATP and ddTTP labelled with biotin, ddCTP and ddGTP labelled with dinitrophenol (DNP). Upon single-based extension (SBE), elongation cannot continue due to the dideoxy nature of the incorporated nucleotide. Staining is carried out by incubating with fluorophore-labelled acceptors: Red-fluorescing Cy5-labelled anti-DNP (targetting ddA/T) and Green-fluorescing Cy3-labelled streptavidin (targeting ddC/G).
   
-  * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan confocal laser microarray scanner.
+  * Fluorescence scanning of the microarray in the Green and Red channels with iScan/HiScan confocal laser microarray scanner. Fluorescence intensity information is stored as two IDAT files, one per fluorescence channel. 
   
-  * Fluorescence intensity information is stored as two IDAT files, one per fluorescence channel. The .IDAT (Intensity Data) extension is Illumina's proprietary format for storage of microarray scanners' raw fluorescence output and is encrypted and non-human readable. After decrypting the two output files, it is possible to extract the number of beads per beadType (nBeads), the mean and SD in fluorescence intensity of each beadType across bead replicates in the green and the red channel (G, R, G_SD and R_SD) plus technical metadata
 
 
 ## Peaking into an IDAT file
