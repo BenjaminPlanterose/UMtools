@@ -408,7 +408,8 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 ![Alt text](img/img2.png?raw=true "cg00050873 U/M plot")
 
-UM plots wide variety of phenomena such as X-inactivation: due to the double gene dosage of Chromosome-X in females, one of the copies is randomly inactivated via large-scale targetted methylation. As a result, females are 50 % methylated while males are 0 or 100 % methylated:
+
+U/M plots are a highly interpretable way to visualize a wide variety of phenomena. For example, X-inactivation: due to the double gene dosage of Chromosome-X in females, one of the copies is randomly inactivated via large-scale targetted methylation. As a result, females are 50 % methylated while males are 0 or 100 % methylated:
 
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00026186", sex = pheno$sex)
@@ -417,7 +418,7 @@ annotation["cg00026186", c("chr", "pos")] # chrX  48367230
 ![Alt text](img/img3.png?raw=true "cg00026186 U/M plot")
 
 
-However, some loci escape X-inactivation and as a result, are unmethylated in both males and females. However, given the double-copy of X-chromosomes in females, the unmethylated intensity is higher on average than in males
+Also, some loci escape X-inactivation and as a result, are unmethylated in both males and females. However, given the double-copy of X-chromosomes in females, the unmethylated intensity is higher on average than in males
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg04927982", sex = pheno$sex)
 annotation["cg04927982", c("chr", "pos")] # chrX  53254653
@@ -425,7 +426,7 @@ annotation["cg04927982", c("chr", "pos")] # chrX  53254653
 ![Alt text](img/img4.png?raw=true "cg04927982 U/M plot")
 
 
-Also, some loci are hypermethylated in for X-chromosomes:
+Finally, some loci are hypermethylated in both females and males:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02973417", sex = pheno$sex)
 annotation["cg02973417", c("chr", "pos")] # chrX  153220895
@@ -438,7 +439,9 @@ annotation["cg02973417", c("chr", "pos")] # chrX  153220895
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques in the U/M plane. The most succesful approach in cases where the number of expected clusters is known, were bivariate Gaussian mixture models (bGMMs). We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+The formation of clusters in the U/M plane is a consistent feature of a genetic artefacts and meQTLs. 
+To assign cluster identity to samples when the number of expected clusters is known (for example, after a U/M plot), we developed bivariate Gaussian mixture models (bGMMs).
+In such approach, we wrapped the routines from the EMCluster. Here are some examples:
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
@@ -463,6 +466,8 @@ set.seed(6); bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 ```
 ![Alt text](img/img9.png?raw=true "cg23186955 bGMM")
 
+
+Knowing the assignation of samples to clusters can be used to estimate minor allele frequencies (MAF).
 
 
 
