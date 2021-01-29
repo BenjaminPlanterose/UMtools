@@ -559,16 +559,24 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 As a word of notice, parameters *eps* and *minPts* depend on the sample size and hence require dataset-specific tuning. To enable the training of these parameters,
 we manually compiled a training set that includes probes forming from 1 to 4 clusters in the U/M plane on a dataset of 426 MZ twin pairs of the E-risk cohort (British, EUR ancestry). 
 However, please note that the number of clusters observed may be different in other datasets depending on ancestry and sample size and hence, the training set needs to be 
-manually curated to employ on a given dataset. In this dataset, we have a much smaller sample size and a different ancestry so we expect differences in the number of expected clusters for probes in the training set.
+manually curated on each dataset. In this specific dataset, we have a much smaller sample size and a different ancestry so we expect storng differences.
+We can confirm our suspicions by: 
 
 ```r
 data("training_set")
-Kcall_CpG(sample(training_set$k_1, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
-Kcall_CpG(sample(training_set$k_2, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
-Kcall_CpG(sample(training_set$k_3, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
-Kcall_CpG(sample(training_set$k_4, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
-train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07) # 0.7948261
+Kcall_CpG(sample(training_set$k_1, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1) # U/M plot of a random probe in the set K = 1
+Kcall_CpG(sample(training_set$k_2, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1) # U/M plot of a random probe in the set K = 2
+Kcall_CpG(sample(training_set$k_3, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1) # U/M plot of a random probe in the set K = 3
+Kcall_CpG(sample(training_set$k_4, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1) # U/M plot of a random probe in the set K = 4
 ```
+
+Though the training set has not been curated on this dataset, for the sake of displaying how to use this UMtools functionality, we display how performance for a set of *eps* and *minPts* can be computed:
+
+```r
+train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07, nThread = 10)
+```
+
+The obtained confusion matrix, macroPrecision, macroRecall and macro-F1 score aim to assess the performance of the multi-class classification task.
 
 
 ### Comethylation plots

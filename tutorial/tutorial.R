@@ -270,9 +270,7 @@ Kcall_CpG(sample(training_set$k_3, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
 Kcall_CpG(sample(training_set$k_4, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
 
 # Lower maf variants are wrongly annotated in this dataset. Sample size not big enough.
-train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07) # 0.7948261
-# Error in train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07) :
-#   object 'k_1' not found
+train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07, nThread = 10) # 0.7948261
 
 ### Comethylation plots
 
