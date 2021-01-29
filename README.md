@@ -541,6 +541,7 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 ![Alt text](img/img15.png?raw=true "cg02494853")
 
 
+As a word of notice, 
 
 TRAIN
 Training annotated with dataset of 426 EUR MZ twin pairs. Training set may not be correctly annotated for other ancestries and other sample sizes.
@@ -614,6 +615,20 @@ annotation["cg00211215", c("chr", "pos", "UCSC_RefGene_Name")] # chr6  32552246 
 ![Alt text](img/img22.png?raw=true "cg11495604")
 
 
+### Annotations included in UMtools
+
+UMtools also contains some helpfuk annotations: 
+
+```r
+data(annot_450K) # Genetic variants associated to Illumina Infinium HumanMethylation450 Beadchip probes
+data(annot_EPIC) # Genetic variants associated to Illumina Infinium MethylationEPIC Beadchip probes
+data(classification_CpG_SNP_450K) # Classification of CpG/SBE-SNPs in the Illumina Infinium HumanMethylation450 Beadchip microarray
+data(classification_CpG_SNP_EPIC) # Classification of CpG/SBE-SNPs in the Illumina Infinium MethylationEPIC Beadchip microarray
+data(CR_probes) # List of in silico-predicted cross-reactive probes in the Illumina Infinium HumanMethylation450 Beadchip microarray
+data(triallelic_CpG_SNP_450K) # Tri-allelic SNPs associated to Illumina Infinium HumanMethylation450 Beadchip probes
+data(triallelic_CpG_SNP_EPIC) # Tri-allelic SNPs associated to Illumina Infinium MethylationEPIC Beadchip probes
+data(training_set) # K-caller (Training Set; EUR, Illumina Infinium HumanMethylation450 Beadchip microarray)
+```
 
 
 ### References
