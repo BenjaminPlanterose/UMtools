@@ -401,7 +401,7 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 ![Alt text](img/img1.png?raw=true "cg00026186 U/M plot")
 
-Unlike on the methylation scale, failed samples cluster at the origin of the UM-plane:
+Unlike on the methylation scale, failed samples cluster are obvious in the U/M-plane:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
