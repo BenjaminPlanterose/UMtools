@@ -8,7 +8,7 @@
 
 ## Why UMtools?
 
-A great range of R-packages have already been developed to analyze data from Illumina's DNA methylation microarray platforms such as minfi, ENmix, ChAMP, EWAStools, etc.
+A great range of R-packages have already been developed to analyze data from Illumina's DNA methylation microarray platforms such as minfi, wateRmelon, ENmix, ChAMP, lumi, methylumi, meffil, EWAStools, etc.
 Where does UMtools fit in this ecosystem? UMtools focuses on the low-level analysis of Illumina DNA methylation microarray data, at the level of fluorescence intensities. 
 
 We believe that we can harvest much more from the IDAT file, Illumina's propietary format. For example, the standard deviation across beads has rarely been mentioned in the 
@@ -227,14 +227,10 @@ head(example$Quants)
 # 10600328 3538  439     11
 ```
 
-We particularly highlight the standard deviation of fluorescence intensities, as it is highly valuable and has rarely made it to the literature.
-
 
 ## Extracting fluorescence intensity matrices
 
-The Bioconductor-based **minfi** library is a huge R-package that has set the standards of quality in methylomics data analysis. Though it contains a vast amount of code that could find other applications, its deep encapsullation via an S4 object-oriented implementation can make it hard for users to find and repurpose low-level functions, especially unexported functions, which are not even on the documentation. As a result, minfi is designed to run as a standarized pipeline rather than an adaptable toolset.
-
-Given that UMtools depends on some basic processing operations already established in the minfi library, we have compiled in this tutorial some handy functions, many of which unexported or not included on minfi's documentation. 
+For this stage, we will be mainly using functions from the minfi package and in some circumstances, functions from UMtools that encapsulate unexported code from the minfi's R-package.
 
 We firstly load UMtools:
 
@@ -322,7 +318,7 @@ nBeads = assay(rgSet, "NBeads")   # Number of Beads across probes
 ```
 
 To convert from probes to CpG sites, we made it easier with the wrapper GR_to_UM (which in turn employs the unexported function *minfi:::.preprocessRaw*), returning a list that contains methylated and unmethylated fluorescence intensities.
-To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In beads_GR_to_UM, we select the smallest number of beads between addressA and addressB to represent a CpG targetted by type-I probe pairs.
+To convert nBeads from probes to CpGs, a criteria for type-I probes is required. In GR_to_UM, we select the smallest number of beads between addressA and addressB to represent a CpG targetted by type-I probe pairs.
 
 ```r
 M_U = GR_to_UM(Red = Red, Grn = Grn, rgSet = rgSet, what = "Mean")
@@ -339,20 +335,23 @@ Internally, it assigns the methylated and unmethylated intensity values as follo
 | Type-I Red    | Red (addressB)    |  Red (addressA)   |
 
 
-Finally, to obtain a matrix of raw beta-values, one can simply compute:
+Finally, to obtain a matrix of raw beta-values or M-values, one can simply compute:
 
 ```r
+# Beta-values
 offset = 100 # For numerical stability at low fluorescence intensities
 beta_value = M_U$M/(M_U$M + M_U$U + offset)
-```
 
-Also quite popular, one can compute M-values as:
-```r
+# M-values
 offset = 1 # For numerical stability at low fluorescence intensities
 M_value = log2((M_U$M + offset)/(M_U$U + offset))
 ```
 
-However, raw beta and M-values should be avoided for further analysis as these display strong within and between array batch effects, especially on large datasets. Normalisation techniques are thus required, for which a wide variety of R-packages can be deployed. Here, we name the most popular: minfi, wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. Unlike the names R-packages, UMtools does not focus on the analysis of the methylation values, but rather on the U/M intensity signals directly.
+A wide range of tools are available to preprocess raw signals such as batch effect correction, background correction, colour channel balance, type-I and II correction or normalisation. In this tutorial we will however focus on
+raw signals. Bare in mind that applications such as EWAS benefit enourmously from further preprocessing but that is discussed elsewhere; for more information, check the documentations for minfi, wateRmelon, ENmix, lumi, methylumi, ChAMP, meffil, preprocessCore and EWAStools. 
+
+
+
 
 
 To clean up the workspace, we can perform:
@@ -437,7 +436,7 @@ annotation["cg02973417", c("chr", "pos")] # chrX  153220895
 
 ### Bivariate Gaussian Mixture Models (bGMMs)
 
-As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques in the UM plane. The most succesful approach in cases where the number of expected clusters is known, were bivariate Gaussian mixture models (bGMMs). We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
+As we have seen in the previous section, the formation of clusters in the UM plane is a consistent feature of a genetic artefact. For this reason, we tested several clustering techniques in the U/M plane. The most succesful approach in cases where the number of expected clusters is known, were bivariate Gaussian mixture models (bGMMs). We wrapped the routines from the EMCluster library for straighforward deployment on epigenomic data. Here some case examples from K = {2, 3, 4, 5}.
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
