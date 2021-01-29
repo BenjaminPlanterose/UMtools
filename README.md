@@ -392,7 +392,9 @@ pheno <- pheno[match(pheno$GEO_ID, IDAT_IDs),] # Make sure samples in pheno are 
 
 UMtools was initially developed to characterise the influence of genetic artefacts on the fluorescence intensity signals of Illumina's DNA methylation microarrays. But its use for exploring the behaviour of probes can be further extended to any probe.
 
-Moving from univariate methylation value to the bivariate the U/M plane not only offers a gain of resolution, but also the possibility to distinguish probe failure from intermediate methylation: when a probe fails, background fluorescence is acquired in both channels of roughly the same scale; as a result the ratio to the total intensity tends to 50 %. For example, the following probe targets the Y-chromosome and hence fails in females, giving rise to beta-values tending towards 0.5 (slightly skewed to the left by the established offset):
+Moving from univariate methylation value to the bivariate the U/M plane not only offers a gain of resolution, but also the possibility to distinguish probe failure from intermediate methylation: when a probe fails, background fluorescence is acquired in both channels of roughly the same scale; as a result the ratio to the total intensity tends to 50 %. 
+
+For example, the following probe targets the Y-chromosome and hence fails in females, giving rise to beta-values tending towards 0.5 (slightly skewed to the left by the established offset):
 ```r
 density_jitter_plot(beta_value, "cg00050873", pheno$sex)
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
