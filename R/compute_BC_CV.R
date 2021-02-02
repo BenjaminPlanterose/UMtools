@@ -31,7 +31,7 @@ compute_BC_CV <- function(CV, parallel = F, nThread = NULL)
       nThread <- detectCores(logical = FALSE)
     }
     print(dim(CV)); message(paste("Using", nThread, "cores"))
-    r <- parallel::mclapply(1:nrow(CV), function(X) UMtools::bimodality_coefficient(CV[x, ], mc.cores = nThread))
+    r <- parallel::mclapply(1:nrow(CV), function(x) UMtools::bimodality_coefficient(CV[x, ]), mc.cores = nThread)
     r <- unlist(r)
   }
   else

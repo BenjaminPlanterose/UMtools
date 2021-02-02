@@ -195,7 +195,7 @@ Back to R, to peak into an IDAT file, in this case of the green channel of rando
 
 ```r
 library(illuminaio)
-#setwd("~/foo/") # Change this route to fit your system
+setwd("~/foo/") # Change this route to fit your system
 example = illuminaio::readIDAT("GSM2808239_sample1_Grn.idat")
 ```
 

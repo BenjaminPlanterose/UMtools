@@ -1,57 +1,7 @@
-#### install-uninstall
-setwd("/home/ben/Documents/Git/")
-library(devtools); library(roxygen2); install("UMtools")
-remove.packages("UMtools")
-####
-
-
-#### test datasets
-data(annot_450K)
-data(annot_EPIC)
-data(classification_CpG_SNP_450K)
-data(classification_CpG_SNP_EPIC)
-data(CR_probes)
-data(triallelic_CpG_SNP_450K)
-data(triallelic_CpG_SNP_EPIC)
-data(training_set)
-####
-
-#### check documentation
-help(annot_450K)
-help(annot_EPIC)
-help(classification_CpG_SNP_450K)
-help(classification_CpG_SNP_EPIC)
-help(CR_probes)
-help(triallelic_CpG_SNP_450K)
-help(triallelic_CpG_SNP_EPIC)
-help(training_set)
-help(bGMM)
-help(compute_BC_CV)
-help(compute_CV)
-help(GR_to_UM)
-help(density_jitter_plot)
-help(export_bigmat)
-help(import_bigmat)
-help(Kcall_CpG)
-help(par_EW_Kcalling)
-help(train_k_caller)
-help(UM_plot)
-help(Visualize_cometh)
-help(kurtosis)
-help(skewness)
-help(bimodality_coefficient)
-####
-
-#### Update documentation
-library(roxygen2); library(devtools)
-setwd("/home/ben/Documents/Git/UMtools/")
-document()
-####
-
-
 ########################################## 1. Installation ##########################################
 
 # To install R-packages from github, you need devtools:
+install.packages("devtools")
 library(devtools)
 
 # Dependencies from Bioconductor
@@ -86,7 +36,7 @@ BiocManager::install('IlluminaHumanMethylation450kmanifest')
 
 # Illuminaio is a dependency of minfi
 library(illuminaio)
-setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
+setwd("~/foo/") # Change this route to fit your system
 example = illuminaio::readIDAT("GSM2808239_sample1_Grn.idat")
 names(example)
 # [1] "fileSize"  "versionNumber" "nFields"   "fields"  "nSNPsRead" "Quants" "MidBlock"
@@ -107,7 +57,7 @@ head(example$Quants, 3)
 ########################################## 4. Extracting fluorescence intensity matrices ##########################################
 
 library(UMtools)
-setwd("/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/") # Change this route to fit your system
+setwd("~/foo/") # Change this route to fit your system
 rgSet = read.metharray.exp(getwd(), extended = TRUE)
 TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
 TypeI.Green <- getProbeInfo(rgSet, type = "I-Green")
@@ -178,7 +128,7 @@ rm(Grn, Red, GrnSD, RedSD, nBeads, nBeads_cg, M_value); gc()
 
 ########################################## 6. Quickly importing/exporting large matrices with data.table ##########################################
 
-setwd("/media/ben/DATA/Ben/3_genetic_artefacts/R-packages/test/") # Change this route to fit your system
+setwd("~/foo/") # Change this route to fit your system
 export_bigmat(M_U$M, "M.txt", nThread = 4)
 list.files()
 M = import_bigmat("2021-01-28_M.txt", nThread = 4)
@@ -186,7 +136,7 @@ M = import_bigmat("2021-01-28_M.txt", nThread = 4)
 ########################################## 7. Quickly importing GEO phenotypes with GEOquery ##########################################
 
 library(GEOquery)
-setwd('/media/ben/DATA/Ben/1_evCpGs/data/aging_children/GSE104812_RAW/')
+setwd('~/foo/')
 pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
 pheno <- pheno_object[[1]]
 pheno <- phenoData(pheno)
@@ -231,7 +181,6 @@ set.seed(4); res = bGMM(M_U$M, M_U$U, "cg23186955", K = 5)
 ### Quantifying epigenome-wide ambivalency in probe failure
 CV = compute_CV(M_SD = M_U_sd$M, U_SD = M_U_sd$U, M = M_U$M, U = M_U_sd$U, alpha = 100)
 BC_CV = compute_BC_CV(CV = CV)
-
 density_jitter_plot(CV, "cg00050873", pheno$sex)
 BC_CV["cg00050873"]
 # cg00050873
@@ -246,14 +195,7 @@ Kcall_CpG("cg00814218", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 Kcall_CpG("cg27024127", M_U$M, M_U$U, minPts = 5, eps = 0.1)
 
 chrY = rownames(annotation)[annotation$chr == "chrY"]
-
-
-
-start_time <- Sys.time()
 K_vec = par_EW_Kcalling(M_U$M[chrY,], M_U$U[chrY,], minPts = 5, eps = 0.1, nThread = 10)
-end_time <- Sys.time()
-end_time - start_time # Consumes 6 GB, 17.46199 secs
-
 table(K_vec)
 # K_vec
 #  1   2
@@ -263,14 +205,9 @@ table(K_vec)
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg02494853", sex = pheno$sex)
 annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 
-
 # If aiming to employ epigenome-wide, it is very important to adjust {minPts, eps} to the
 # sample size of the data employed.
-
-# setwd("/home/ben/Documents/Git/UMtools/data/")
-# load("training_set.Rdata")
 data("training_set")
-
 # Training annotated with dataset of 426 EUR MZ twin pairs. Training set may not be correctly annotated
 # for other ancestries and other sample sizes.
 Kcall_CpG(sample(training_set$k_1, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
