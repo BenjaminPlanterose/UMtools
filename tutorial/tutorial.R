@@ -37,6 +37,9 @@ help(par_EW_Kcalling)
 help(train_k_caller)
 help(UM_plot)
 help(Visualize_cometh)
+help(kurtosis)
+help(skewness)
+help(bimodality_coefficient)
 ####
 
 #### Update documentation
@@ -57,7 +60,6 @@ BiocManager::install('minfi')
 BiocManager::install('Sushi')
 
 # Dependencies from CRAN
-devtools::install_version("modes", "0.7.0")
 install.packages("scales")
 install.packages("EMCluster")
 install.packages("dbscan")
@@ -69,6 +71,8 @@ install_github("BenjaminPlanterose/UMtools")
 BiocManager::install('GEOquery')
 BiocManager::install('IlluminaHumanMethylation450kanno.ilmn12.hg19')
 BiocManager::install('IlluminaHumanMethylation450kmanifest')
+
+
 
 ########################################## 2. Downloading example ##########################################
 

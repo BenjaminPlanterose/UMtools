@@ -1,6 +1,6 @@
 #' Density-jitter plot
 #' @export
-#' @import modes
+#' @import scales
 #' @description Overlaps a density plot with a jitter plot. A random y-component is added to cause the spread of
 #' points.
 #' @param mat Matrix of a continous varible such as beta-value, M-value, CVlogT, etc (CpGs as rows and samples as columns)
@@ -9,7 +9,6 @@
 #' @param alpha Transparency
 #' @param lambda Regulates the random spread of the points
 #' @param main Title name
-
 #' @return Graphics
 #' @examples
 #' density_jitter_plot(beta_value, "cg00050873", pheno$sex)

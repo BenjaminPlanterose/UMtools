@@ -16,7 +16,6 @@
 #' @examples
 #' res = Visualize_cometh(annotation = annotation, CpG = 'cg14911689', distance = 1000,
 #'                        L_bound = 3, R_bound = 2, beta_mat = beta_value, max_y = 5)
-
 Visualize_cometh = function(annotation, CpG, distance, L_bound, R_bound, beta_mat, probe2exclude = NULL, max_y = 11)
 {
   annotation = annotation[order(annotation$chr, annotation$pos),]

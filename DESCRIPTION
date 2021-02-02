@@ -13,8 +13,7 @@ Depends:
     EMCluster,
     Sushi,
     dbscan,
-    parallel,
-    modes
+    parallel
 Imports:
     data.table,
     RColorBrewer,

@@ -1,17 +1,9 @@
 #' Classification of CpG/SBE-SNPs in the Illumina Infinium MethylationEPIC Beadchip microarray
-#'
-#'
-#'
 #' @docType data
-#'
 #' @usage data(classification_CpG_SNP_EPIC)
-#'
 #' @format An object of class list
-#'
 #' @keywords datasets
-#'
 #' @references Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
-#'
 #' @description  Includes a list containing processed vcf files in 16 categories:
 #' \itemize{
 #'   \item II_plus_SNP1_C_TA: Infinium type-II probe, targeting (+)-strand, SNP at position 1, Alleles: C ⇔ A/T
@@ -50,7 +42,6 @@
 #'   \item CpG_end: probe region end (hg19/GRCh37), input into bedtools (consider that bedtools employed intervals from the form (a,b]
 #'   \item cg: CpG identifier (see IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 #' }
-#'
 #' @examples
 #' data(classification_CpG_SNP_EPIC)
 "classification_CpG_SNP_EPIC"

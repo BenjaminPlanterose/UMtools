@@ -1,5 +1,4 @@
 #' BC(CV)
-#' @import modes
 #' @import parallel
 #' @export
 #' @description Computes bimodality coefficient of the CVlogT per CpG across samples
@@ -31,15 +30,13 @@ compute_BC_CV <- function(CV, parallel = F, nThread = NULL)
     {
       nThread <- detectCores(logical = FALSE)
     }
-
-    cl <- makeCluster(nThread)
-    clusterExport(cl, c("bimodality_coefficient"), envir=environment())
-    r <- parSapply(cl = cl, X = 1:nrow(CV), FUN = function(x) bimodality_coefficient(CV[x, ]))
-    stopCluster(cl)
+    print(dim(CV)); message(paste("Using", nThread, "cores"))
+    r <- parallel::mclapply(1:nrow(CV), function(X) UMtools::bimodality_coefficient(CV[x, ], mc.cores = nThread))
+    r <- unlist(r)
   }
   else
   {
-    r = sapply(1:nrow(CV), function(x) bimodality_coefficient(CV[x, ]))
+    r = sapply(1:nrow(CV), function(x) UMtools::bimodality_coefficient(CV[x, ]))
   }
 
   names(r) <- rownames(CV)

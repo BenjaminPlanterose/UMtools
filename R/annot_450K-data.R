@@ -1,17 +1,9 @@
 #' Genetic variants associated to Illumina Infinium HumanMethylation450 Beadchip probes
-#'
-#'
-#'
 #' @docType data
-#'
 #' @usage data(annot_450K)
-#'
 #' @format An object of class list
-#'
 #' @keywords datasets
-#'
 #' @references Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
-#'
 #' @description Includes a list containing processed vcf files in 6 categories:
 #' \itemize{
 #'   \item CpG_SNP
@@ -42,8 +34,6 @@
 #'   \item CpG_end: probe region end (hg19/GRCh37), input into bedtools (consider that bedtools employed intervals from the form (a,b]
 #'   \item cg: CpG identifier (see IlluminaHumanMethylation450kanno.ilmn12.hg19)
 #' }
-#'
-#'
 #' @examples
 #' data(annot_450K)
 "annot_450K"

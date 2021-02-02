@@ -14,7 +14,6 @@ data(triallelic_CpG_SNP_450K)
 Includes a matrix that was obtained by intersecting 450K probe coordinates with common variants in dbSNP151
 file 00-common_all.vcf. We considered tri-allelic those variants for which three alleles display allelic frequencies larger than 0.05.
 Scripts employed can be found at UMtools/scripts/.
-
 Column names correspond to the following:
 \itemize{
   \item SNP_chr: SNP chromosome number

@@ -1,15 +1,8 @@
 #' K-caller (Training Set; EUR, Illumina Infinium HumanMethylation450 Beadchip microarray)
-#'
-#'
-#'
 #' @docType data
-#'
 #' @usage data(training_set)
-#'
 #' @format An object of class list
-#'
 #' @keywords datasets
-#'
 #' @description  Includes a list 4 vectors of 450K cg id's:
 #' \itemize{
 #'   \item K = 1
@@ -24,10 +17,7 @@
 #'  will be  sample size or ancestry.
 #' If one manually verifies that these lists apply to their own dataset, they can be used for
 #' calibrating parameters \emph{eps} and \emph{minPts} from the K-caller.
-#'
 #' @references Revisiting Genetic artefacts on DNA methylation microarrays. Genome Research
-#'
-#'
 #' @examples
 #' data(training_set)
 "training_set"

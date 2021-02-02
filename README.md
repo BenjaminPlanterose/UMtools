@@ -54,7 +54,6 @@ install.packages("dbscan")
 install.packages("RColorBrewer")
 
 # From Github
-devtools::install_version("modes", "0.7.0")
 devtools::install_github("BenjaminPlanterose/UMtools")
 ```
 

@@ -1,17 +1,11 @@
 #' List of in silico-predicted cross-reactive probes in the Illumina Infinium HumanMethylation450 Beadchip microarray
-#'
 #' @description A compilation of 41,993 cross-reactive (CR) probes obtained by combining the CR-lists
 #' from Price \emph{et al} (\strong{2013}) and Chen \emph{et al} (\strong{2013}). For the list of Price \emph{et al},
 #' we included both autosomal and allosomal hits (A_YES or XY_YES).
-#'
 #' @docType data
-#'
 #' @usage data(CR_probes)
-#'
 #' @format An object of class vector
-#'
 #' @keywords datasets
-#'
 #' @references
 #' [1] Chen \emph{et al} (\strong{2013}). Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.
 #' \emph{Epigenetics}. 2013 Feb;8(2):203-9. doi: 10.4161/epi.23470. Epub 2013 Jan 11.
