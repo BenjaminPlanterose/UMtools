@@ -15,7 +15,7 @@ We believe that we can harvest much more from the IDAT file, Illumina's propieta
 literature and could be used in applications studying to the technical noise of DNA methylation microarray platforms.
 
 We have additionally included new tools such as CVlogT, BC(CVlogT), K-caller or comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
-(B. Planterose *et al* **2021**) but that could well be employed for other applications.
+(B. Planterose Jiménez *et al* **2021**) but that could well be employed for other applications.
 
 Finally, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
 R-package) and wrapped it to ease working at this level.
@@ -266,7 +266,7 @@ known_probes = c(SnpI$AddressA, SnpI$AddressB, SnpII$AddressA, ctrls$Address, Ty
                  TypeI.Red$AddressB, TypeI.Green$AddressA, TypeI.Green$AddressB, TypeII$AddressA)
                  
 length(known_probes)                  # 621926
-all = rownames(rgSet); length(known_probes) # 622399
+all = rownames(rgSet); length(all) # 622399
 orphan = all[!(all %in% known_probes)]; length(orphan) # 473
 ```
 
