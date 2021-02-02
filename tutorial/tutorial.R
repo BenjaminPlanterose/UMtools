@@ -54,7 +54,8 @@ library(devtools)
 # Dependencies from Bioconductor
 if (!requireNamespace("BiocManager", quietly=TRUE)) install.packages("BiocManager")
 BiocManager::install('minfi')
-BiocManager::install('GEOquery')
+BiocManager::install('Sushi')
+
 # Dependencies from CRAN
 devtools::install_version("modes", "0.7.0")
 install.packages("scales")
@@ -62,8 +63,12 @@ install.packages("EMCluster")
 install.packages("dbscan")
 install.packages("RColorBrewer")
 # Dependencies from Github
-install_github("dphansti/Sushi")
 install_github("BenjaminPlanterose/UMtools")
+
+# Needed to complete this tutorial
+BiocManager::install('GEOquery')
+BiocManager::install('IlluminaHumanMethylation450kanno.ilmn12.hg19')
+BiocManager::install('IlluminaHumanMethylation450kmanifest')
 
 ########################################## 2. Downloading example ##########################################
 
@@ -270,7 +275,7 @@ Kcall_CpG(sample(training_set$k_3, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
 Kcall_CpG(sample(training_set$k_4, 1), M_U$M, M_U$U, minPts = 5, eps = 0.1)
 
 # Lower maf variants are wrongly annotated in this dataset. Sample size not big enough.
-train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07, nThread = 10) # 0.7948261
+train_k_caller(M_U$M, M_U$U, training_set, 3, 0.07, nThread = 10)
 
 ### Comethylation plots
 

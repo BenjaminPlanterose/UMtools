@@ -42,18 +42,19 @@ To install UMtools dependencies:
 # From Bioconductor
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
-BiocManager::install('minfi')
+BiocManager::install("minfi")
+BiocManager::install("Sushi")
+
 
 # From CRAN
-install.packages(parallel)
-install.packages(scales)
-install.packages(EMCluster)
-install.packages(dbscan)
-install.packages(RColorBrewer)
+install.packages("parallel")
+install.packages("scales")
+install.packages("EMCluster")
+install.packages("dbscan")
+install.packages("RColorBrewer")
 
 # From Github
 devtools::install_version("modes", "0.7.0")
-devtools::install_github("dphansti/Sushi")
 devtools::install_github("BenjaminPlanterose/UMtools")
 ```
 
