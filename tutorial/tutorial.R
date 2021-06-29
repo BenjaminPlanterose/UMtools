@@ -27,10 +27,11 @@ BiocManager::install('IlluminaHumanMethylation450kmanifest')
 ########################################## 2. Downloading example ##########################################
 
 # Run in bash
-# wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar --wait=10 --limit-rate=50K
-# tar -xvf GSE104812_RAW.tar
-# find . -type f ! -name '*.idat.gz' -delete
-# gunzip *.gz
+# wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar # download files
+# tar -xvf GSE104812_RAW.tar # decompress files
+# find . -type f ! -name '*.idat.gz' -delete # eliminate non-IDAT files
+# gunzip *.gz # uncompress IDATs
+
 
 ########################################## 3. Peaking into an IDAT ##########################################
 
@@ -137,7 +138,7 @@ M = import_bigmat("2021-01-28_M.txt", nThread = 4)
 
 library(GEOquery)
 setwd('~/foo/')
-pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
+pheno_object <- getGEO(GEO = 'GSE104812', destdir=".", getGPL = FALSE)
 pheno <- pheno_object[[1]]
 pheno <- phenoData(pheno)
 pheno <- pData(pheno)

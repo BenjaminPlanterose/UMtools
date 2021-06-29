@@ -14,7 +14,9 @@ Where does UMtools fit in this ecosystem? UMtools focuses on the low-level analy
 We believe that we can harvest much more from the IDAT file, Illumina's propietary format. For example, the standard deviation across beads has rarely been mentioned in the 
 literature and could be used in applications studying to the technical noise of DNA methylation microarray platforms.
 
-We have additionally included new tools such as CVlogT, BC(CVlogT), K-caller or comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
+
+
+We have additionally included new tools such as CV<sub>logT</sub>, BC(CVl<sub>logT</sub>), K-caller or comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
 (B. Planterose Jiménez *et al* **2021**) but that could well be employed for other applications.
 
 Finally, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
@@ -184,10 +186,10 @@ raw fluorescence output among several genome-wide platform. The IDAT format is e
 To unveil the content of the IDAT file, we first need to download some examples from the GEO database. Throughout this tutorial, we will be using the data from Shi *et al* (GEO_ID = GSE104812), consisting of whole blood DNA methylation data from healthy children. To download the data, you may ran the following bash commands:
 
 ```bash
-wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar --wait=10 --limit-rate=50K
-tar -xvf GSE104812_RAW.tar
-find . -type f ! -name '*.idat.gz' -delete
-gunzip *.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE104nnn/GSE104812/suppl/GSE104812_RAW.tar # download files
+tar -xvf GSE104812_RAW.tar # decompress files
+find . -type f ! -name '*.idat.gz' -delete # eliminate non-IDAT files
+gunzip *.gz # uncompress IDATs
 ```
 Or if prefered, it is also possible to go to the following url and manually download the TAR (of IDAT) via http https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104812
 
@@ -245,7 +247,7 @@ intensity channels, we will need to set the *extended* argument to TRUE.
 
 ```r
 setwd("~/foo/") # Change this route to fit your system
-rgSet = read.metharray.exp(getwd(), extended = TRUE)
+rgSet = read.metharray.exp(getwd(), extended = TRUE) # WARNING: RAM/time intensive (roughly a few minutes)
 ```
 
 From the resulting RGChannelSetExtended class object, it is possible to extract the annotation for all probe types
@@ -377,7 +379,7 @@ In addition, GEOquery allows to parse phenotypes from the GEO database in minimu
 ```r
 library(GEOquery)
 setwd('~/foo/')
-pheno_object <- getGEO('GSE104812', destdir=".", getGPL = FALSE)
+pheno_object <- getGEO(GEO = 'GSE104812', destdir=".", getGPL = FALSE)
 pheno <- pheno_object[[1]]
 pheno <- phenoData(pheno)
 pheno <- pData(pheno)
@@ -401,7 +403,7 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 ```
 ![Alt text](img/img1.png?raw=true "cg00026186 U/M plot")
 
-Unlike on the methylation scale, failed samples cluster are obvious in the U/M-plane:
+Unlike on the methylation scale, failed samples cluster around the origin in the U/M-plane:
 ```r
 UM_plot(M = M_U$M, U = M_U$U, CpG = "cg00050873", sex = pheno$sex)
 annotation["cg00050873", c("chr", "pos")] # chrY   9363356
@@ -441,7 +443,7 @@ annotation["cg02973417", c("chr", "pos")] # chrX  153220895
 
 The formation of clusters in the U/M plane is a consistent feature of a genetic artefacts and meQTLs. 
 To assign cluster identity to samples when the number of expected clusters is known (for example, after a U/M plot), we developed bivariate Gaussian mixture models (bGMMs).
-In such approach, we wrapped the routines from the EMCluster. Here are some examples:
+In such approach, we wrapped the routines from the EMCluster R-package. Here are some examples:
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
@@ -480,7 +482,7 @@ For probes suffering from a genetic variant that causes probe failure, a duality
 CV is a measure of noise-to-signal ratio. CV is highly bimodal when a probe fails due to a genetic artefact (females display large noise-to-signal ratio than males for chrY-targeting probes).
 
 ```r
-CV = compute_CV(M_SD = M_U_sd$M, U_SD = M_U_sd$U, M = M_U$M, U = M_U_sd$U, alpha = 100)
+CV = compute_CV(M_SD = M_U_sd$M, U_SD = M_U_sd$U, M = M_U$M, U = M_U_sd$U, alpha = 100) # WARNING: RAM/time intensive (roughly 1 min)
 density_jitter_plot(CV, "cg00050873", pheno$sex)
 ```
 ![Alt text](img/img10.png?raw=true "cg00050873 jitter")
@@ -493,7 +495,7 @@ Bimodality can be quantified by a *bimodality coefficient* as a function of the 
 BC(CV) is defined in the range [0,1] and BC(CV)> 5/9 can be used as evidence for multimodality.
 
 ```r
-BC_CV = compute_BC_CV(CV = CV)
+BC_CV = compute_BC_CV(CV = CV) # WARNING: time intensive (roughly 2 min)
 BC_CV["cg00050873"]
 # cg00050873 
 #   1.128555  # higher than 1, because sample estimators are used to computed kurtosis and skewness and the sample size employed is small.
@@ -503,7 +505,7 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 
 ### K-calling
 
-Cluster formation in the UM plane cannot be tested epigenome-wide by bGMM since we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm.
+Cluster formation in the UM plane cannot be tested epigenome-wide by bGMM since we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm (implemented in the dbscan R-package)
 
 On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that that K-calling is performed in a transformed scale to reduce the ellipticity of clusters in the U/M plane.
 
@@ -664,7 +666,7 @@ data(training_set) # K-caller (Training Set; EUR, Illumina Infinium HumanMethyla
 
 ### References
 
-B. Planterose *et al* (**2021**). Revisiting genetic artefacts on DNA methylation microarrays: implications for meQTL mapping. *Genome research*
+B. Planterose *et al* (**2021**). Revisiting genetic artefacts on DNA methylation microarrays exposes novel biological implications. *Genome Biology*
 
 
 
