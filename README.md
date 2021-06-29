@@ -16,7 +16,7 @@ literature and could be used in applications studying to the technical noise of 
 
 
 
-We have additionally included new tools such as CV<sub>logT</sub>, BC(CV<sub>logT</sub>), K-caller or comethylation plots that we developed for the verification of genetic artefacts in the 450K array 
+We have additionally included new tools such as CV<sub>logT</sub>, BC(CV<sub>logT</sub>), K-caller or comethylation plots that we developed for the verification of genetic artefacts in Illumina's DNA methylation microarray platforms
 (B. Planterose Jiménez *et al* **2021**) but that could well be employed for other applications.
 
 Finally, as most libraries tend to hide the initial steps of analysis (unexported functions, lack of documentation), we have rescued code (especially from the minfi 
