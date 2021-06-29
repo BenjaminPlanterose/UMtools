@@ -38,7 +38,7 @@ install.packages("devtools")
 library(devtools)
 ```
 
-To install UMtools dependencies:
+To install UMtools and its dependencies:
 
 ```r
 # From Bioconductor
