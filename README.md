@@ -667,9 +667,3 @@ data(training_set) # K-caller (Training Set; EUR, Illumina Infinium HumanMethyla
 ### References
 
 B. Planterose *et al* (**2021**). Revisiting genetic artefacts on DNA methylation microarrays exposes novel biological implications. *Genome Biology*
-
-
-
-
-
-
