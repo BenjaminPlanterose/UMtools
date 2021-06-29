@@ -27,7 +27,7 @@ R-package) and wrapped it to ease working at this level.
     Ubuntu 18.04.4 LTS (bionic)
     R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
     
-For issues arising while running UMtools, either [report an issue](https://github.com/BenjaminPlanterose/UMtools/issues) or simply contact b.planterosejimenez@erasmusmc.nl
+For issues arising while running UMtools, either [report an issue](https://github.com/BenjaminPlanterose/UMtools/issues) or simply contact b.planterosejimenez at erasmusmc.nl
     
 ## Installation 
 
