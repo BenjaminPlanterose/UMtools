@@ -369,7 +369,7 @@ During the analysis of DNA methylation microarray data, reading IDATs can be tim
 setwd("~/foo/") # Change this route to fit your system
 export_bigmat(M_U$M, "M.txt", nThread = 4)
 list.files() # "2021-01-28_M.txt"
-M = import_bigmat("2021-01-28_M.txt", nThread = 4)
+M = import_bigmat("2021-01-28_M.txt", nThread = 4) # Replace date!
 ```
 
 ## Importing phenotypes with GEOquery
@@ -443,7 +443,7 @@ annotation["cg02973417", c("chr", "pos")] # chrX  153220895
 
 The formation of clusters in the U/M plane is a consistent feature of a genetic artefacts and meQTLs. 
 To assign cluster identity to samples when the number of expected clusters is known (for example, after a U/M plot), we developed bivariate Gaussian mixture models (bGMMs).
-In such approach, we wrapped the routines from the EMCluster R-package. Here are some examples:
+In such approach, we wrapped the routines from the EMCluster R-package. Here are some examples (but bare in mind that UMtools works best on larger sample sizes):
 
 ```r
 set.seed(2); bGMM(M_U$M, M_U$U, "cg03398919", K = 2)
@@ -492,7 +492,7 @@ Bimodality can be quantified by a *bimodality coefficient* as a function of the 
 
 <img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
 
-BC(CV) is defined in the range [0,1] and BC(CV)> 5/9 can be used as evidence for multimodality.
+BC(CV) is defined in the range [0,1] and BC(CV)> 5/9 can be used as evidence for multimodality (but bare in mind that UMtools works best on larger sample sizes): 
 
 ```r
 BC_CV = compute_BC_CV(CV = CV) # WARNING: time intensive (roughly 2 min)
@@ -507,7 +507,8 @@ annotation["cg00050873", c("chr", "pos")] # chrY   9363356
 
 Cluster formation in the UM plane cannot be tested epigenome-wide by bGMM since we do not know the target number of clusters. Because of this, we developed a K-caller, a tool able to automatically detect how many clusters are formed in the U/M plane based on the density-based spatial clustering of applications with noise (dbscan) algorithm (implemented in the dbscan R-package)
 
-On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that that K-calling is performed in a transformed scale to reduce the ellipticity of clusters in the U/M plane.
+On the one hand, the function *Kcall_CpG* provides of a visual output. Please note that outliers are not included in any class and that that K-calling is performed in a transformed 
+scale to reduce the ellipticity of clusters in the U/M plane. Also, bare in mind that UMtools works best on larger sample sizes.
 
 ```r
 Kcall_CpG("cg15771735", M_U$M, M_U$U, minPts = 5, eps = 0.1)
