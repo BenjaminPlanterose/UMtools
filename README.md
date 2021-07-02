@@ -490,7 +490,9 @@ density_jitter_plot(CV, "cg00050873", pheno$sex)
 
 Bimodality can be quantified by a *bimodality coefficient* as a function of the sample skewness (<img src="https://render.githubusercontent.com/render/math?math=\gamma">) and kurtosis (<img src="https://render.githubusercontent.com/render/math?math=\kappa">):
 
-<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
+<img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV}^{2} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
+
+$2^{(n-1)/3}$
 
 BC(CV) is defined in the range [0,1] and BC(CV)> 5/9 can be used as evidence for multimodality (but bare in mind that UMtools works best on larger sample sizes): 
 
