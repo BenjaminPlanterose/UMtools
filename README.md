@@ -562,7 +562,7 @@ annotation["cg02494853", c("chr", "pos")] # chrY   4868397
 ![Alt text](img/img15.png?raw=true "cg02494853")
 
 As a word of notice, parameters *eps* and *minPts* depend on the sample size and hence require dataset-specific tuning. To enable the training of these parameters,
-we manually compiled a training set that includes probes forming from 1 to 4 clusters in the U/M plane on a dataset of 426 MZ twin pairs of the E-risk cohort (British, EUR ancestry). 
+we manually compiled a training set that includes probes forming from 1 to 4 clusters in the U/M plane on a dataset of 426 MZ twin pairs of the E-risk cohort (British, EUR ancestry, GEO_ID = GSE105018). 
 However, please note that the number of clusters observed may be different in other datasets depending on ancestry and sample size and hence, the training set needs to be 
 manually curated. In this specific dataset, we have a much smaller sample size and a different ancestry so we expect strong differences.
 We can confirm our suspicions by: 
