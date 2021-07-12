@@ -142,7 +142,7 @@ The addition of type-I probes together with the inclusion of control bead types 
 
   * SnpI (n = 25 x 2) - Two bead types per SNP.
 
-  * SnpII (n = 40) - One bead type per cytosine.
+  * SnpII (n = 40) - One bead type per SNP.
 
 * orphan probes (n = 473) - placed on the array for unknown purposes. 
 
@@ -154,8 +154,8 @@ In total, that makes:
 
 Also, during the manufacture, beads are pooled in equal ratio and then deposited on the array. 
 As a result, the exact number of copies of each beadType is not controlled (varies from chip to chip). To assign the correspondence between microwells and bead types, decoding is required. 
-This is done during manufacture via consecutive hybridizations with other sets of probes that target the address, a 23 nucleotide-long oligonucleotide handle (address) that links the bead 
-to the probe in the form of a DMAP file (Nakabayashi 2017).
+This is done during manufacture via 5 consecutive hybridizations with other sets of probes that target the address, a 23 nucleotide-long oligonucleotide handle that links the bead 
+to the probe; this information can be found in the form of a DMAP file (Nakabayashi 2017).
 
 
 ## The 450K protocol
@@ -491,8 +491,6 @@ density_jitter_plot(CV, "cg00050873", pheno$sex)
 Bimodality can be quantified by a *bimodality coefficient* as a function of the sample skewness (<img src="https://render.githubusercontent.com/render/math?math=\gamma">) and kurtosis (<img src="https://render.githubusercontent.com/render/math?math=\kappa">):
 
 <img src="https://render.githubusercontent.com/render/math?math=BC(CV) = \dfrac{\hat{\gamma}_{CV}^{2} %2B 1}{\hat{\kappa}_{CV} %2B \dfrac{3(n-1)^2}{(n-2)(n-3)}}">
-
-$2^{(n-1)/3}$
 
 BC(CV) is defined in the range [0,1] and BC(CV)> 5/9 can be used as evidence for multimodality (but bare in mind that UMtools works best on larger sample sizes): 
 
