@@ -36,7 +36,7 @@ Fits a Gaussian Mixture Model (bGMM) with K components on the Unmethylated/Methy
 }
 \details{
 It employs the function init.EM from the R-package EMCluster that fits a Gaussian Mixture Model employing the expectation-maximization
-algorithm on the U/M plane. Run help(initEM) for more information on the EMCluster control functions.
+algorithm on the U/M plane. Run help(init.EM) for more information on the EMCluster control functions.
 }
 \examples{
 rgSet = read.metharray.exp(getwd(), extended = TRUE)

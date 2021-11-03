@@ -7,7 +7,7 @@ Description: Adds extra funtionality for analysing Illumina DNA Methylation arra
 License: MIT LICENSE
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends:
     minfi,
     EMCluster,
