@@ -20,8 +20,9 @@
 #' bGMM(M = M_U$M, U = M_U$U, CpG = "cg00814218", K = 3)
 bGMM <- function(M, U, CpG, K, stable.solution = TRUE, min.n = NULL, min.n.iter = 2000, method = 'em.EM', EMC = .EMC, transform = TRUE)
 {
-  m = M[CpG, ]
-  u = U[CpG, ]
+  m = M[CpG, ]; m = m + rnorm(n = length(m), mean = 0, sd = 0.1)
+  u = U[CpG, ]; u = u + rnorm(n = length(u), mean = 0, sd = 0.1)
+  
   if (transform) 
   {
     df = data.frame(x = m/(u + m + 100), y = log2(u + m +  100))
