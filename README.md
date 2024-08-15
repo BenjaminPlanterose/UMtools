@@ -1,7 +1,7 @@
 # UMtools
 ## An R-package for analysing Illumina DNA Methylation microarrays at the fluorescence intensity level
 
-#### Benjamin Planterose Jiménez, Manfred Kayser, Athina Vidaki
+#### Benjamin Planterose Jiménez
 #### Department of Genetic Identification, Erasmus MC University Medical Centre Rotterdam, The Netherlands
 
 
